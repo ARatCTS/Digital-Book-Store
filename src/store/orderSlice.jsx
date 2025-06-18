@@ -1,147 +1,128 @@
 // /src/store/orderSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import apiClient from '../api/apiClient';
+import { clearCart } from './cartSlice'; // Import to clear cart after order
 
-// Async Thunks for Orders
-export const fetchOrders = createAsyncThunk(
-  'orders/fetchOrders',
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await apiClient.get('/api/orders');
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const fetchUserOrders = createAsyncThunk(
-  'orders/fetchUserOrders',
-  async (userId, { rejectWithValue }) => {
-    try {
-      const response = await apiClient.get(`/api/users/${userId}/orders`);
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
-    }
-  }
-);
-
+/**
+ * Async thunk for customers to place a new order.
+ * This interacts with the POST /api/orders endpoint.
+ */
 export const placeOrder = createAsyncThunk(
-  'orders/placeOrder',
-  async (orderData, { rejectWithValue }) => {
-    try {
-      const response = await apiClient.post('/api/orders', orderData);
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
+    'orders/placeOrder',
+    async (orderData, { dispatch, rejectWithValue }) => {
+        try {
+            const response = await apiClient.post('/api/orders', orderData);
+            // On successful order, clear the user's shopping cart
+            dispatch(clearCart());
+            dispatch(fetchBooks()); // Refresh book list to update stock
+
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || 'Failed to place order');
+        }
     }
-  }
 );
 
-export const cancelOrder = createAsyncThunk(
-  'orders/cancelOrder',
-  async (orderId, { rejectWithValue }) => {
-    try {
-      await apiClient.delete(`/api/orders/${orderId}`);
-      return orderId;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
+/**
+ * Async thunk for customers to fetch their own order history.
+ * This interacts with the GET /api/orders/my-orders endpoint.
+ */
+export const fetchUserOrders = createAsyncThunk(
+    'orders/fetchUserOrders',
+    async (userId, { rejectWithValue }) => {
+        try {
+            const response = await apiClient.get(`/api/orders/my-orders?userId=${userId}`);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || 'Failed to fetch user orders');
+        }
     }
-  }
 );
 
-// NEW ASYNC THUNK FOR UPDATING ORDER STATUS
+
+/**
+ * Async thunk to fetch all orders for the admin panel.
+ * This interacts with the GET /api/orders/admin endpoint.
+ */
+export const fetchAllOrders = createAsyncThunk(
+    'orders/fetchAllOrders',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await apiClient.get('/api/orders/admin');
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || 'Failed to fetch orders');
+        }
+    }
+);
+
+/**
+ * Async thunk to update the status of a specific order.
+ * This interacts with the PATCH /api/orders/{id}/status endpoint.
+ */
 export const updateOrderStatus = createAsyncThunk(
-  'orders/updateOrderStatus',
-  async ({ orderId, status }, { rejectWithValue }) => {
-    try {
-      // Assuming a backend endpoint like PUT /api/orders/{orderId}/status
-      // or PATCH /api/orders/{orderId} with a body { "status": "SHIPPED" }
-      // This example uses a PUT to a dedicated status endpoint with a simple string status.
-      // Adjust the URL and method based on your actual backend API.
-      const response = await apiClient.put(`/api/orders/${orderId}/status`, { status });
-      return response.data; // Assuming backend returns the updated order
-    } catch (error) {
-      return rejectWithValue(error.response.data);
+    'orders/updateOrderStatus',
+    async ({ orderId, newStatus }, { rejectWithValue }) => {
+        try {
+            const response = await apiClient.patch(`/api/orders/${orderId}/status?newStatus=${newStatus}`);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || 'Failed to update status');
+        }
     }
-  }
 );
 
-
+// Defines the initial state for the orders slice.
 const initialState = {
-  items: [],
-  status: 'idle',
-  error: null,
+    items: [], // This will store all orders for the admin panel.
+    userOrders: [], // This will store orders for the logged-in customer.
+    status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
+    error: null,
 };
 
 const orderSlice = createSlice({
-  name: 'orders',
-  initialState,
-  reducers: {
-    // No synchronous reducers needed for now
-  },
-  extraReducers: (builder) => {
-    builder
-      // fetchOrders
-      .addCase(fetchOrders.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(fetchOrders.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.items = action.payload;
-      })
-      .addCase(fetchOrders.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.payload;
-      })
-      // fetchUserOrders
-      .addCase(fetchUserOrders.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(fetchUserOrders.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.items = action.payload;
-      })
-      .addCase(fetchUserOrders.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.payload;
-      })
-      // placeOrder
-      .addCase(placeOrder.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.items.push(action.payload);
-      })
-      .addCase(placeOrder.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.payload;
-      })
-      // cancelOrder
-      .addCase(cancelOrder.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.items = state.items.filter((order) => order.id !== action.payload);
-      })
-      .addCase(cancelOrder.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.payload;
-      })
-      // NEW extraReducers for updateOrderStatus
-      .addCase(updateOrderStatus.pending, (state) => {
-        state.status = 'loading'; // Or a more specific status if you prefer
-      })
-      .addCase(updateOrderStatus.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        const updatedOrder = action.payload;
-        const index = state.items.findIndex(order => order.id === updatedOrder.id);
-        if (index !== -1) {
-          state.items[index] = updatedOrder; // Update the order in the state
-        }
-      })
-      .addCase(updateOrderStatus.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.payload;
-      });
-  },
+    name: 'orders',
+    initialState,
+    reducers: {},
+    // Handles actions defined by createAsyncThunk
+    extraReducers: (builder) => {
+        builder
+            // Reducers for fetching all orders (Admin)
+            .addCase(fetchAllOrders.pending, (state) => {
+                state.status = 'loading';
+                state.error = null;
+            })
+            .addCase(fetchAllOrders.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.items = action.payload; // Replace state with the fetched orders
+            })
+            .addCase(fetchAllOrders.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.payload;
+            })
+            // Reducer for updating a single order's status (Admin)
+            .addCase(updateOrderStatus.fulfilled, (state, action) => {
+                const index = state.items.findIndex(order => order.id === action.payload.id);
+                if (index !== -1) {
+                    state.items[index] = action.payload;
+                }
+            })
+            .addCase(updateOrderStatus.rejected, (state, action) => {
+                console.error("Failed to update order status:", action.payload);
+            })
+            // Reducers for customer-specific orders
+            .addCase(fetchUserOrders.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(fetchUserOrders.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.userOrders = action.payload;
+            })
+            .addCase(placeOrder.fulfilled, (state, action) => {
+                // Add the newly placed order to the user's order history
+                state.userOrders.unshift(action.payload);
+            });
+    },
 });
 
 export default orderSlice.reducer;

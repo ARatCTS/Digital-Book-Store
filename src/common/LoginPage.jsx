@@ -10,13 +10,20 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const { status, error } = useSelector((state) => state.auth);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const result = await dispatch(loginUser({ email, password }));
-    if (loginUser.fulfilled.match(result)) {
-      navigate('/');
+  const { isAdmin } = useSelector((state) => state.auth);
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  const result = await dispatch(loginUser({ email, password }));
+  if (loginUser.fulfilled.match(result)) {
+    if (isAdmin) {
+      navigate('/admin/dashboard');
+    } else {
+      navigate('/profile');
     }
-  };
+  }
+};
+
 
   return (
     <div className="flex justify-center mt-10">

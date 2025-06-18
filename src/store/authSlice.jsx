@@ -1,75 +1,71 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import apiClient from './../api/apiClient';
-import { jwtDecode } from 'jwt-decode'; // Use a library like jwt-decode
+import apiClient from '../api/apiClient';
+import { jwtDecode } from 'jwt-decode';
 
 const getInitialState = () => {
-  const token = localStorage.getItem('jwtToken');
-  if (token) {
-    try {
-      const decodedToken = jwtDecode(token);
-      const currentTime = Date.now() / 1000;
-      if (decodedToken.exp > currentTime) {
-        return {
-          token,
-          user: { email: decodedToken.sub, roles: decodedToken.roles },
-          isAuthenticated: true,
-          isAdmin: decodedToken.roles.includes('ROLE_ADMIN'),
-          status: 'succeeded',
-          error: null,
-        };
-      }
-    } catch (error) {
-        // Invalid token
+    const token = localStorage.getItem('jwtToken');
+    if (token) {
+        try {
+            const decodedToken = jwtDecode(token);
+            if (decodedToken.exp * 1000 > Date.now()) {
+                return {
+                    token,
+                    user: { id: decodedToken.userId, email: decodedToken.sub, roles: decodedToken.roles, name: decodedToken.name },
+                    isAuthenticated: true,
+                    isAdmin: decodedToken.roles.includes('ADMIN'),
+                    status: 'succeeded', error: null,
+                };
+            }
+        } catch (error) { /* Invalid token */ }
     }
-  }
-  return { user: null, token: null, isAuthenticated: false, isAdmin: false, status: 'idle', error: null };
+    return { user: null, token: null, isAuthenticated: false, isAdmin: false, status: 'idle', error: null };
 };
 
-export const loginUser = createAsyncThunk(
-  'auth/login',
-  async (credentials, { rejectWithValue }) => {
+export const loginUser = createAsyncThunk('auth/login', async (credentials, { rejectWithValue }) => {
     try {
-      const { data } = await apiClient.post('/api/auth/login', credentials);
-      localStorage.setItem('jwtToken', data.token);
-      return data.token;
+        const { data } = await apiClient.post('/api/auth/login', credentials);
+        localStorage.setItem('jwtToken', data.token);
+        return data.token;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+        return rejectWithValue(error.response?.data);
     }
-  }
-);
-
-const authSlice = createSlice({
-  name: 'auth',
-  initialState: getInitialState(),
-  reducers: {
-    logout: (state) => {
-      localStorage.removeItem('jwtToken');
-      state.user = null;
-      state.token = null;
-      state.isAuthenticated = false;
-      state.isAdmin = false;
-    },
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(loginUser.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(loginUser.fulfilled, (state, action) => {
-        const token = action.payload;
-        const decodedToken = jwtDecode(token);
-        state.token = token;
-        state.user = { email: decodedToken.sub, roles: decodedToken.roles };
-        state.isAuthenticated = true;
-        state.isAdmin = decodedToken.roles.includes('ROLE_ADMIN');
-        state.status = 'succeeded';
-      })
-      .addCase(loginUser.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.payload;
-      });
-  },
 });
 
-export const { logout } = authSlice.actions;
+export const updateUserProfile = createAsyncThunk('auth/updateProfile', async (userData, { dispatch, rejectWithValue }) => {
+    try {
+        // The backend uses the token to identify the user, so we send the DTO.
+        const response = await apiClient.put(`/api/users/profile`, userData);
+        dispatch(updateUser(response.data));
+        return response.data;
+    } catch (error) {
+        return rejectWithValue(error.response?.data);
+    }
+});
+
+const authSlice = createSlice({
+    name: 'auth',
+    initialState: getInitialState(),
+    reducers: {
+        logout: (state) => {
+            localStorage.removeItem('jwtToken');
+            state.user = null; state.token = null; state.isAuthenticated = false; state.isAdmin = false;
+        },
+        updateUser: (state, action) => {
+            state.user = { ...state.user, ...action.payload };
+        }
+    },
+    extraReducers: (builder) => {
+        builder.addCase(loginUser.fulfilled, (state, action) => {
+            const token = action.payload;
+            const decodedToken = jwtDecode(token);
+            state.token = token;
+            state.user = { id: decodedToken.userId, email: decodedToken.sub, roles: decodedToken.roles, name: decodedToken.name };
+            state.isAuthenticated = true;
+            state.isAdmin = decodedToken.roles.includes('ADMIN');
+            state.status = 'succeeded';
+        });
+    },
+});
+
+export const { logout, updateUser } = authSlice.actions;
 export default authSlice.reducer;
