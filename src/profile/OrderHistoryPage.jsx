@@ -8,33 +8,95 @@ export default function OrderHistoryPage() {
     const { userOrders, status } = useSelector(state => state.orders);
 
     useEffect(() => {
-    console.log("User object:", user); // This will show the correct structure
-    if (user?.id) {
-        dispatch(fetchUserOrders(user.id));
+        console.log("User object:", user); // This will show the correct structure
+        if (user?.id) {
+            dispatch(fetchUserOrders(user.id));
+        }
+    }, [user, dispatch]);
+
+    // Helper function to get status styling
+    const getStatusClass = (status) => {
+        switch (status.toLowerCase()) {
+            case 'completed':
+                return 'bg-green-100 text-green-600';
+            case 'processing':
+                return 'bg-blue-100 text-blue-600';
+            case 'cancelled':
+                return 'bg-red-100 text-red-600';
+            default:
+                return 'bg-gray-100 text-gray-600';
+        }
+    };
+
+    if (status === 'loading') {
+        return <p className="text-center py-8">Loading your orders...</p>;
     }
-}, [user, dispatch]);
 
+    if (userOrders.length === 0 && status === 'succeeded') {
+        return <p className="text-center py-8">You have not placed any orders yet.</p>;
+    }
 
+// src/components/OrderHistoryPage.jsx
 
-    if(status === 'loading') return <p>Loading your orders...</p>;
+// ... (other imports and code)
 
     return (
-        <div className="bg-white p-6 rounded-xl shadow-lg">
-            <h1 className="text-2xl font-bold mb-4">My Order History</h1>
-            <div className="space-y-4">
-                {userOrders.map(order => (
-                    <div key={order.id} className="border p-4 rounded-lg">
-                        <div className="flex justify-between">
-                            <p><strong>Order ID:</strong> {order.id}</p>
-                            <p><strong>Date:</strong> {new Date(order.orderDate).toLocaleDateString()}</p>
-                        </div>
-                        <div className="flex justify-between mt-2">
-                             <p><strong>Total:</strong> ${order.totalAmount.toFixed(2)}</p>
-                             <p><strong>Status:</strong> {order.status}</p>
-                        </div>
+        <div className="p-4">
+            <div className="max-w-screen-lg mx-auto">
+                <div className="border-b border-gray-300 pb-4">
+                    <div className="flex items-center flex-wrap gap-4">
+                        <h3 className="text-2xl font-semibold text-slate-900">Order History</h3>
                     </div>
-                ))}
-                {userOrders.length === 0 && <p>You have not placed any orders yet.</p>}
+                </div>
+
+                <div className="divide-y divide-gray-300 mt-6">
+                    {userOrders.map(order => (
+                        <div key={order.id} className="grid grid-cols-5 max-md:grid-cols-2 items-start justify-between gap-6 py-4">
+                            <div className="md:col-span-2 flex items-start gap-4 max-sm:flex-col">
+                                <div className="bg-gray-100 p-2 rounded-lg w-20 h-20 shrink-0">
+                                    <img
+                                        src={order.orderItems[0]?.imageUrl || 'https://via.placeholder.com/64x64/000000/FFFFFF?text=Product'}
+                                        alt={order.orderItems[0]?.title || 'Product Image'}
+                                        className="w-full h-full object-contain"
+                                    />
+                                </div>
+                                <div>
+                                    <h6 className="text-[15px] font-semibold text-slate-900">
+                                        {order.orderItems.length > 1 ? 'Multiple Items' : order.orderItems[0]?.title || 'N/A'}
+                                    </h6>
+                                    <div className="mt-2">
+                                        <p className="text-[15px] text-slate-500 font-medium">Order ID: <span className="ml-1 text-slate-900">#{String(order.id).substring(0, 8)}</span></p> {/* Changed this line */}
+                                        {order.orderItems.length > 1 && (
+                                            <p className="text-[13px] text-slate-500 font-medium">
+                                                ({order.orderItems.length} items)
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h6 className="text-[15px] font-medium text-slate-500">Date</h6>
+                                <p className="text-[15px] text-slate-900 font-medium mt-2">
+                                    {new Date(order.orderDate).toLocaleDateString('en-US', {
+                                        year: 'numeric',
+                                        month: 'long',
+                                        day: 'numeric'
+                                    })}
+                                </p>
+                            </div>
+                            <div>
+                                <h6 className="text-[15px] font-medium text-slate-500">Status</h6>
+                                <p className={`text-[13px] font-medium mt-2 inline-block rounded-md py-1.5 px-3 ${getStatusClass(order.status)}`}>
+                                    {order.status}
+                                </p>
+                            </div>
+                            <div className="md:ml-auto">
+                                <h6 className="text-[15px] font-medium text-slate-500">Price</h6>
+                                <p className="text-[15px] text-slate-900 font-medium mt-2">${order.totalAmount.toFixed(2)}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     );

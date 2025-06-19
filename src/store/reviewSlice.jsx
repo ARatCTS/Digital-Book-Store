@@ -21,18 +21,14 @@ export const fetchAllReviews = createAsyncThunk(
   'reviews/fetchAllReviews',
   async (_, { rejectWithValue }) => {
     try {
-      // Based on your SecurityConfig, /api/reviews/** is authenticated(),
-      // but if this is for a general list for ADMINs (like moderation),
-      // it might fall under .requestMatchers("/api/reviews/moderate/**").hasRole("ADMIN")
-      // or you might have a dedicated /api/reviews/all endpoint that needs ADMIN.
-      // For now, let's assume /api/reviews is authenticated, and you'll handle admin checks on the frontend or backend directly.
-      const response = await apiClient.get('/api/reviews'); // Assuming backend has GET /api/reviews for all
+      const response = await apiClient.get('/api/reviews/admin'); // <-- updated endpoint
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
+
 
 
 export const addReview = createAsyncThunk(
@@ -77,16 +73,16 @@ export const deleteReview = createAsyncThunk(
 // Admin-specific review moderation
 export const moderateReview = createAsyncThunk(
   'reviews/moderateReview',
-  async ({ reviewId, status }, { rejectWithValue }) => {
+  async ({ id, approved }, { rejectWithValue }) => {
     try {
-      // Backend: .requestMatchers("/api/reviews/moderate/**").hasRole("ADMIN")
-      const response = await apiClient.post(`/api/reviews/moderate/${reviewId}/${status}`);
+      const response = await apiClient.patch(`/api/reviews/moderate/${id}?approved=${approved}`);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
+
 
 
 const initialState = {

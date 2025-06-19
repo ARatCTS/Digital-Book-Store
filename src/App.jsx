@@ -18,6 +18,7 @@ import AdminDashboard from './admin/AdminDashBoard';
 import BookManagement from './admin/BookManagement';
 import OrderManagement from './admin/OrderManagement';
 import ReviewManagement from './admin/ReviewManagement';
+import PaymentCompletePage from './cart/PaymentCompletePage';
 
 function App() {
   return (
@@ -38,7 +39,7 @@ function App() {
             <Route path="/profile" element={<ProtectedRoute><ProfilePage/></ProtectedRoute>} />
             <Route path="/orders" element={<ProtectedRoute><OrderHistoryPage/></ProtectedRoute>} />
             <Route path="/checkout" element={<ProtectedRoute><CheckoutPage/></ProtectedRoute>} />
-
+             <Route path="/payment-complete" element={<ProtectedRoute><PaymentCompletePage /></ProtectedRoute>} />
             {/* --- Admin Protected Routes --- */}
             <Route path="/admin" element={<ProtectedRoute adminOnly={true}><AdminLayout /></ProtectedRoute>}>
                 <Route index element={<Navigate to="dashboard" replace />} />

@@ -63,6 +63,7 @@ const authSlice = createSlice({
             state.isAuthenticated = true;
             state.isAdmin = decodedToken.roles.includes('ADMIN');
             state.status = 'succeeded';
+            console.log("State",state.user );
         });
     },
 });

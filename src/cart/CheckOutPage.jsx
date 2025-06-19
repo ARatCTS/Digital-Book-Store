@@ -1,26 +1,26 @@
-import React, { useState, useEffect } from 'react'; // NEW: Imported useState and useEffect
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { placeOrder } from './../store/orderSlice';
+import { clearCart } from './../store/cartSlice'; // Make sure clearCart is imported
 
 export default function CheckoutPage() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    // NEW: Local state for loading and error feedback
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const { items: cartItems } = useSelector(state => state.cart);
-    const { user, isAuthenticated } = useSelector(state => state.auth); // NEW: Get isAuthenticated status
+    // No need for selectedPaymentMethod state as we're removing card options
 
-    // NEW: Redirect user if cart is empty or if they are not authenticated
+    const { items: cartItems } = useSelector(state => state.cart);
+    const { isAuthenticated } = useSelector(state => state.auth);
+
     useEffect(() => {
         if (!isAuthenticated) {
-            navigate('/login'); // Redirect to login if not logged in
+            navigate('/login');
         } else if (cartItems.length === 0 && !isLoading) {
-            // Don't redirect while an order is being placed (as cart gets cleared)
-            navigate('/books'); // Redirect to shopping page if cart is empty
+            navigate('/books');
         }
     }, [cartItems, isAuthenticated, navigate, isLoading]);
 
@@ -30,74 +30,84 @@ export default function CheckoutPage() {
         setIsLoading(true);
         setError(null);
 
-        const orderData = {
-            orderItems: cartItems.map(item => ({ bookId: item.id, quantity: item.quantity }))
-        };
+        // Simulate an API call delay
+        await new Promise(resolve => setTimeout(resolve, 1500));
 
-        const result = await dispatch(placeOrder(orderData));
+        const mockSuccess = true; // Always simulate success for this flow
 
         setIsLoading(false);
 
-        if (placeOrder.fulfilled.match(result)) {
-            // On success, the cart will be cleared by the thunk, triggering the useEffect to navigate away.
-            // A dedicated confirmation page would be even better.
-            navigate('/orders');
+        if (mockSuccess) {
+            // Dispatch the actual order placement
+            const orderResult = await dispatch(placeOrder({
+                orderItems: cartItems.map(item => ({ bookId: item.id, quantity: item.quantity }))
+            }));
+
+            if (placeOrder.fulfilled.match(orderResult)) {
+                dispatch(clearCart()); // Clear cart after successful order
+                navigate('/payment-complete'); // Redirect to the new celebration page
+            } else {
+                const errorMsg = orderResult.payload?.message || 'Failed to place order. Please try again.';
+                setError(errorMsg);
+            }
         } else {
-            // NEW: Handle the error case
-            const errorMsg = result.payload?.message || 'An unexpected error occurred. Please try again.';
-            setError(errorMsg);
+            // This part might not be hit if mockSuccess is always true, but good for robust error handling
+            setError('Payment failed. Please try again.');
         }
     };
-    
-    // NEW: Don't render anything if the cart is empty (while waiting for redirect)
+
     if (cartItems.length === 0) {
         return <p className="text-center">Your cart is empty. Redirecting...</p>;
     }
 
     return (
-        <div className="max-w-4xl mx-auto">
-            <h1 className="text-3xl font-bold mb-6">Checkout</h1>
-            <div className="grid md:grid-cols-2 gap-8">
-                <div className="bg-white p-6 rounded-xl shadow-lg">
-                    <h2 className="text-xl font-bold mb-4">Order Summary</h2>
-                    <div className="space-y-2">
-                        {cartItems.map(item => (
-                            <div key={item.id} className="flex justify-between">
-                                <span>{item.title} x {item.quantity}</span>
-                                <span>${(item.price * item.quantity).toFixed(2)}</span>
-                            </div>
-                        ))}
-                    </div>
-                    <div className="border-t mt-4 pt-4 flex justify-between font-bold text-lg">
-                        <span>Total</span>
-                        <span>${totalAmount.toFixed(2)}</span>
-                    </div>
-                </div>
+        <section className="bg-white p-4">
+            <div className="md:max-w-5xl max-w-xl mx-auto">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {/* Left Section: Payment Action */}
+                    <div className="lg:col-span-2 max-md:order-1">
+                        <h2 className="text-3xl font-semibold text-slate-900">Make a payment</h2>
+                        <p className="text-slate-500 text-sm mt-4">Complete your transaction swiftly and securely with our easy-to-use payment process.</p>
+                        <div className="mt-8 max-w-lg">
+                            <h3 className="text-lg font-semibold text-slate-900">Confirm & Pay</h3>
+                            <p className="text-slate-700 mt-6 mb-6">By clicking "Pay Now", you confirm your order and agree to complete the payment for ${totalAmount.toFixed(2)}.</p>
 
-                <div className="bg-white p-6 rounded-xl shadow-lg flex flex-col justify-between">
-                    <div>
-                        <h2 className="text-xl font-bold mb-4">Payment Information</h2>
-                        <p className="text-gray-600 mb-4">This is a simulated payment gateway. Clicking 'Pay Now' will place your order directly.</p>
+                            {error && (
+                                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                                    <strong className="font-bold">Error: </strong>
+                                    <span className="block sm:inline">{error}</span>
+                                </div>
+                            )}
+                            <button
+                                type="button"
+                                onClick={handlePlaceOrder}
+                                className="mt-8 w-full py-3 text-[15px] font-medium bg-purple-500 text-white rounded-md hover:bg-purple-600 tracking-wide cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                disabled={isLoading}
+                            >
+                                {isLoading ? 'Processing Payment...' : `Pay Now ($${totalAmount.toFixed(2)})`}
+                            </button>
+                        </div>
                     </div>
-                    <div>
-                        {/* NEW: Display error message if one exists */}
-                        {error && (
-                            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                                <strong className="font-bold">Error: </strong>
-                                <span className="block sm:inline">{error}</span>
-                            </div>
-                        )}
-                        {/* NEW: Disable button and change text during loading */}
-                        <button 
-                            onClick={handlePlaceOrder} 
-                            className="w-full px-6 py-3 text-white bg-green-500 rounded-lg hover:bg-green-600 font-bold disabled:bg-gray-400 disabled:cursor-not-allowed"
-                            disabled={isLoading}
-                        >
-                            {isLoading ? 'Placing Order...' : `Pay Now & Place Order ($${totalAmount.toFixed(2)})`}
-                        </button>
+
+                    {/* Right Section: Order Summary */}
+                    <div className="bg-gray-100 p-6 rounded-md">
+                        <h2 className="text-2xl font-semibold text-slate-900">${totalAmount.toFixed(2)}</h2>
+                        <ul className="text-slate-500 font-medium mt-8 space-y-4">
+                            {cartItems.map((item) => (
+                                <li key={item.id} className="flex flex-wrap gap-4 text-sm">
+                                    {item.title} x {item.quantity} <span className="ml-auto font-semibold text-slate-900">${(item.price * item.quantity).toFixed(2)}</span>
+                                </li>
+                            ))}
+                            <li className="flex flex-wrap gap-4 text-sm">
+                                Tax <span className="ml-auto font-semibold text-slate-900">${(totalAmount * 0.05).toFixed(2)}</span>
+                            </li>
+                            <li className="flex flex-wrap gap-4 text-[15px] font-semibold text-slate-900 border-t border-gray-300 pt-4">
+                                Total <span className="ml-auto">${totalAmount.toFixed(2)}</span>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
     );
 }
