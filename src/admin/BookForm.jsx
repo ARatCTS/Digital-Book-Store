@@ -35,7 +35,7 @@ export default function BookForm({ book, closeModal }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"> {/* Added z-50 here */}
       <div className="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md">
         <h2 className="text-2xl font-bold mb-4">{book ? 'Edit Book' : 'Add New Book'}</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
