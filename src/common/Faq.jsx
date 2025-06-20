@@ -2,134 +2,63 @@ import React from 'react'
 
 export const Faq = () => {
   return (
-    <div className="flow-root">
-  <div className="-my-4 flex flex-col divide-y divide-gray-200">
-    <details className="group py-4 [&_summary::-webkit-details-marker]:hidden" open>
-      <summary className="flex items-center justify-between gap-1.5 text-gray-900">
-        <h2 className="text-lg font-medium">Lorem ipsum dolor sit amet consectetur adipisicing?</h2>
-
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="block size-5 shrink-0 group-open:hidden"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="hidden size-5 shrink-0 group-open:block"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-      </summary>
-
-      <p className="pt-4 text-gray-900">
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ab hic veritatis molestias culpa
-        in, recusandae laboriosam neque aliquid libero nesciunt voluptate dicta quo officiis
-        explicabo consequuntur distinctio corporis earum similique!
-      </p>
-    </details>
-
-    <details className="group py-4 [&_summary::-webkit-details-marker]:hidden">
-      <summary className="flex items-center justify-between gap-1.5 text-gray-900">
-        <h2 className="text-lg font-medium">Lorem ipsum dolor sit amet consectetur adipisicing?</h2>
-
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="block size-5 shrink-0 group-open:hidden"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="hidden size-5 shrink-0 group-open:block"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-      </summary>
-
-      <p className="pt-4 text-gray-900">
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ab hic veritatis molestias culpa
-        in, recusandae laboriosam neque aliquid libero nesciunt voluptate dicta quo officiis
-        explicabo consequuntur distinctio corporis earum similique!
-      </p>
-    </details>
-
-    <details className="group py-4 [&_summary::-webkit-details-marker]:hidden">
-      <summary className="flex items-center justify-between gap-1.5 text-gray-900">
-        <h2 className="text-lg font-medium">Lorem ipsum dolor sit amet consectetur adipisicing?</h2>
-
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="block size-5 shrink-0 group-open:hidden"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="hidden size-5 shrink-0 group-open:block"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-      </summary>
-
-      <p className="pt-4 text-gray-900">
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ab hic veritatis molestias culpa
-        in, recusandae laboriosam neque aliquid libero nesciunt voluptate dicta quo officiis
-        explicabo consequuntur distinctio corporis earum similique!
-      </p>
-    </details>
-  </div>
-</div>
+    <div className="relative mx-auto w-full px-5 py-16 text-gray-800 sm:px-20 md:max-w-screen-lg lg:py-24">
+      <h2 className="mb-5 text-4xl text-center font-serif sm:text-5xl">Have Questions? Checkout these FAQs</h2>
+      <p className="mb-12 text-center text-lg text-gray-600">We've answered some of the most common questions about our bookstore. If you still can't find what you're looking for, feel free to contact us!</p>
+      <ul className="divide-y divide-gray-200">
+        <li className="text-left">
+          <label htmlFor="accordion-1" className="flex flex-col">
+            <input className="peer hidden" type="checkbox" id="accordion-1" />
+            <div className="before:absolute before:-left-6 before:block before:text-xl before:text-blue-400 before:content-['–'] peer-checked:before:content-['+'] relative ml-4 cursor-pointer select-none items-center py-4 pr-2">
+              <h3 className="text-sm lg:text-base">Do you offer international shipping for books?</h3>
+            </div>
+            <div className="peer-checked:hidden pr-2">
+              <div className="pb-5">
+                <p className="text-sm">Lorem ipsum, **dolor sit amet** consectetur adipisicing elit. Adipisci eligendi, recusandae voluptatum distinctio facilis necessitatibus aperiam ut? Dolor mollitia modi aliquam, non sint at reprehenderit commodi dignissimos quo unde asperiores officiis quos laboriosam similique nihil.</p>
+              </div>
+            </div>
+          </label>
+        </li>
+        <li className="text-left">
+          <label htmlFor="accordion-2" className="flex flex-col">
+            <input className="peer hidden" type="checkbox" id="accordion-2" checked />
+            <div className="before:absolute before:-left-6 before:block before:text-xl before:text-blue-400 before:content-['–'] peer-checked:before:content-['+'] relative ml-4 cursor-pointer select-none items-center py-4 pr-2">
+              <h3 className="text-sm lg:text-base">Can I return a book if I'm not satisfied with my purchase?</h3>
+            </div>
+            <div className="peer-checked:hidden pr-2">
+              <div className="pb-5">
+                <p className="text-sm">Lorem ipsum, **dolor sit amet** consectetur adipisicing elit. Adipisci eligendi, recusandae voluptatum distinctio facilis necessitatibus aperiam ut? Dolor mollitia modi aliquam, non sint at reprehenderit commodi dignissimos quo unde asperiores officiis quos laboriosam similique nihil.</p>
+              </div>
+            </div>
+          </label>
+        </li>
+        <li className="text-left">
+          <label htmlFor="accordion-3" className="flex flex-col">
+            <input className="peer hidden" type="checkbox" id="accordion-3" checked />
+            <div className="before:absolute before:-left-6 before:block before:text-xl before:text-blue-400 before:content-['–'] peer-checked:before:content-['+'] relative ml-4 cursor-pointer select-none items-center py-4 pr-2">
+              <h3 className="text-sm lg:text-base">How do I track my book order?</h3>
+            </div>
+            <div className="peer-checked:hidden pr-2">
+              <div className="pb-5">
+                <p className="text-sm">Lorem ipsum, **dolor sit amet** consectetur adipisicing elit. Adipisci eligendi, recusandae voluptatum distinctio facilis necessitatibus aperiam ut? Dolor mollitia modi aliquam, non sint at reprehenderit commodi dignissimos quo unde asperiores officiis quos laboriosam similique nihil.</p>
+              </div>
+            </div>
+          </label>
+        </li>
+        <li className="text-left">
+          <label htmlFor="accordion-4" className="flex flex-col">
+            <input className="peer hidden" type="checkbox" id="accordion-4" checked />
+            <div className="before:absolute before:-left-6 before:block before:text-xl before:text-blue-400 before:content-['–'] peer-checked:before:content-['+'] relative ml-4 cursor-pointer select-none items-center py-4 pr-2">
+              <h3 className="text-sm lg:text-base">Do you have a loyalty program for frequent readers?</h3>
+            </div>
+            <div className="peer-checked:hidden pr-2">
+              <div className="pb-5">
+                <p className="text-sm">Lorem ipsum, **dolor sit amet** consectetur adipisicing elit. Adipisci eligendi, recusandae voluptatum distinctio facilis necessitatibus aperiam ut? Dolor mollitia modi aliquam, non sint at reprehenderit commodi dignissimos quo unde asperiores officiis quos laboriosam similique nihil.</p>
+              </div>
+            </div>
+          </label>
+        </li>
+      </ul>
+    </div>
   )
 }

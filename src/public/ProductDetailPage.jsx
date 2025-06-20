@@ -96,7 +96,7 @@ export default function ProductDetailPage() {
 
           <div className="mt-8">
             <div className="flex items-center flex-wrap gap-4">
-              <p className="text-slate-900 text-4xl font-semibold">${book.price.toFixed(2)}</p>
+              <p className="text-slate-900 text-4xl font-semibold">₹{book.price.toFixed(2)}</p>
               {/* You can add a compare_at_price to your book data to show a discount */}
               {/* <p className="text-slate-400 text-xl mt-1"><strike>$42.00</strike></p> */}
             </div>

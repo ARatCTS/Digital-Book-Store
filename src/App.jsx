@@ -19,8 +19,8 @@ import OrderManagement from './admin/OrderManagement';
 import ReviewManagement from './admin/ReviewManagement';
 import PaymentCompletePage from './cart/PaymentCompletePage';
 import ErrorPage from './common/ErrorPage';
-import { ContactUs } from './common/ContactUs';
-import { About } from './common/About';
+import About from './common/About';
+import ContactUs from './common/ContactUs';
 
 function App() {
   return (

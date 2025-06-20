@@ -127,11 +127,11 @@ export default function BookList() {
                         <div className="border-t border-gray-200 p-4">
                         <div className="flex justify-between gap-4">
                             <label htmlFor="FilterPriceFrom" className="flex items-center gap-2">
-                            <span className="text-sm text-gray-600">$</span>
+                            <span className="text-sm text-gray-600">₹</span>
                             <input type="number" id="FilterPriceFrom" placeholder="From" value={priceRange.from} onChange={e => setPriceRange(p => ({ ...p, from: e.target.value }))} className="w-full rounded-md border-gray-200 shadow-sm sm:text-sm" />
                             </label>
                             <label htmlFor="FilterPriceTo" className="flex items-center gap-2">
-                            <span className="text-sm text-gray-600">$</span>
+                            <span className="text-sm text-gray-600">₹</span>
                             <input type="number" id="FilterPriceTo" placeholder="To" value={priceRange.to} onChange={e => setPriceRange(p => ({ ...p, to: e.target.value }))} className="w-full rounded-md border-gray-200 shadow-sm sm:text-sm" />
                             </label>
                         </div>
