@@ -1,7 +1,6 @@
-// /src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import NavBar from './common/NavBar';
+import NavBar from './common/Navbar';
 import Footer from './common/Footer';
 import ProtectedRoute from './common/ProtectedRoute';
 import HomePage from './common/HomePage';
@@ -19,6 +18,7 @@ import BookManagement from './admin/BookManagement';
 import OrderManagement from './admin/OrderManagement';
 import ReviewManagement from './admin/ReviewManagement';
 import PaymentCompletePage from './cart/PaymentCompletePage';
+import ErrorPage from './common/ErrorPage';
 
 function App() {
   return (
@@ -39,15 +39,19 @@ function App() {
             <Route path="/profile" element={<ProtectedRoute><ProfilePage/></ProtectedRoute>} />
             <Route path="/orders" element={<ProtectedRoute><OrderHistoryPage/></ProtectedRoute>} />
             <Route path="/checkout" element={<ProtectedRoute><CheckoutPage/></ProtectedRoute>} />
-             <Route path="/payment-complete" element={<ProtectedRoute><PaymentCompletePage /></ProtectedRoute>} />
+            <Route path="/payment-complete" element={<ProtectedRoute><PaymentCompletePage /></ProtectedRoute>} />
+            
             {/* --- Admin Protected Routes --- */}
             <Route path="/admin" element={<ProtectedRoute adminOnly={true}><AdminLayout /></ProtectedRoute>}>
-                <Route index element={<Navigate to="dashboard" replace />} />
-                <Route path="dashboard" element={<AdminDashboard />} />
-                <Route path="books" element={<BookManagement />} />
-                <Route path="orders" element={<OrderManagement />} />
-                <Route path="reviews" element={<ReviewManagement />} />
+              <Route index element={<Navigate to="dashboard" replace />} />
+              <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="books" element={<BookManagement />} />
+              <Route path="orders" element={<OrderManagement />} />
+              <Route path="reviews" element={<ReviewManagement />} />
             </Route>
+
+            {/* --- Catch-all Route for 404 Not Found pages --- */}
+            <Route path="*" element={<ErrorPage/>} /> {/* <-- 2. Add the catch-all route here */}
           </Routes>
         </main>
         <Footer />

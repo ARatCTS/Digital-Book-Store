@@ -1,17 +1,40 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchBooks } from '../store/bookSlice';
 import { addItemToCart } from '../store/cartSlice';
 import { fetchReviewsByBookId, addReview } from '../store/reviewSlice';
 
+// A small component to render star ratings
+const StarRating = ({ rating }) => {
+  const totalStars = 5;
+  const filledStars = Math.round(rating);
+  return (
+    <div className="flex items-center space-x-1">
+      {[...Array(totalStars)].map((_, index) => (
+        <svg
+          key={index}
+          className={`w-4 h-4 ${index < filledStars ? 'text-slate-800' : 'text-gray-300'}`}
+          fill="currentColor"
+          viewBox="0 0 14 13"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path d="M7 0L9.4687 3.60213L13.6574 4.83688L10.9944 8.29787L11.1145 12.6631L7 11.2L2.8855 12.6631L3.00556 8.29787L0.342604 4.83688L4.5313 3.60213L7 0Z" />
+        </svg>
+      ))}
+    </div>
+  );
+};
+
+
 export default function ProductDetailPage() {
   const { bookId } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { items: books, status: bookStatus } = useSelector(state => state.books);
   const { items: reviews, status: reviewStatus } = useSelector(state => state.reviews);
-  const { isAuthenticated, user } = useSelector(state => state.auth);
+  const { isAuthenticated } = useSelector(state => state.auth);
 
   const book = books.find(b => b.id.toString() === bookId);
 
@@ -27,77 +50,136 @@ export default function ProductDetailPage() {
 
   const handleReviewSubmit = (e) => {
     e.preventDefault();
+    if (!comment.trim()) return; // Prevent empty reviews
     dispatch(addReview({ bookId, comment, rating }));
     setComment('');
     setRating(5);
   };
 
+  const handleBuyNow = () => {
+    dispatch(addItemToCart(book));
+    navigate('/checkout');
+  };
+  
+  const averageRating = reviews.length > 0
+    ? reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length
+    : 0;
+
   if (bookStatus === 'loading' || !book) {
-    return <div className="text-center p-10">Loading book details...</div>;
+    return <div className="text-center p-10 font-semibold text-lg">Loading book details...</div>;
   }
 
   return (
-    <div className="bg-white p-8 rounded-xl shadow-lg max-w-5xl mx-auto">
-      <div className="grid md:grid-cols-2 gap-8">
-        <div className="md:w-full">
-          <div className="bg-gray-200 h-96 rounded-lg flex items-center justify-center">
-            <span className="text-gray-400">Book Cover Image</span>
-          </div>
+    <div className="font-sans">
+      <div className="grid items-start grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        {/* Placeholder for Image Gallery */}
+        <div className="col-span-2 lg:sticky top-0">
+           <div className="bg-gray-200 rounded-lg h-[550px] flex items-center justify-center">
+             <span className="text-gray-400 text-xl">Book Cover Placeholder</span>
+           </div>
         </div>
-        <div className="flex flex-col justify-center">
-          <h1 className="text-4xl font-bold text-gray-900">{book.title}</h1>
-          <p className="text-xl text-gray-500 mt-2">by {book.authorName}</p>
-          <p className="text-3xl font-bold text-indigo-600 my-6">${book.price.toFixed(2)}</p>
-          <p className="text-gray-700 leading-relaxed mb-8">
-            This is a placeholder for the book's description. It would detail the plot, characters, and unique selling points of the book to engage potential readers.
-          </p>
+
+        {/* Product Details */}
+        <div className="py-6 px-4 sm:px-8">
           <div>
+            <h2 className="text-3xl font-extrabold text-slate-900">{book.title}</h2>
+            <p className="text-lg text-slate-500 mt-2">by {book.authorName}</p>
+          </div>
+
+          <div className="flex items-center space-x-4 mt-6">
+            <StarRating rating={averageRating} />
+            <a href="#reviews" className="px-2.5 py-1.5 bg-slate-100 text-xs text-slate-900 rounded-md cursor-pointer">
+              {reviews.length} Reviews
+            </a>
+          </div>
+
+          <div className="mt-8">
+            <div className="flex items-center flex-wrap gap-4">
+              <p className="text-slate-900 text-4xl font-semibold">${book.price.toFixed(2)}</p>
+              {/* You can add a compare_at_price to your book data to show a discount */}
+              {/* <p className="text-slate-400 text-xl mt-1"><strike>$42.00</strike></p> */}
+            </div>
+          </div>
+
+          <div className="mt-8 space-y-4">
             <button
               onClick={() => dispatch(addItemToCart(book))}
-              className="w-full px-10 py-3 text-lg font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              type="button"
+              className="w-full px-4 py-3 cursor-pointer border border-slate-800 bg-transparent hover:bg-slate-50 text-slate-900 font-semibold rounded-md transition-colors"
             >
-              Add to Cart
+              Add to cart
             </button>
+            <button
+              onClick={handleBuyNow}
+              type="button"
+              className="w-full px-4 py-3 cursor-pointer border border-slate-800 bg-slate-800 hover:bg-slate-900 text-white font-semibold rounded-md transition-colors"
+            >
+              Buy now
+            </button>
+          </div>
+
+          <div className="mt-10">
+            <div>
+              <h3 className="text-xl font-semibold text-slate-900">Description</h3>
+              <p className="text-sm text-slate-600 mt-4 leading-relaxed">
+                {book.description || 'A full description of this amazing book is coming soon. It will detail the plot, characters, and unique selling points to engage potential readers.'}
+              </p>
+            </div>
+            {/* You can add more structured details here if they exist in your book data */}
+            {/* <ul className="space-y-3 list-disc mt-4 pl-4 text-sm text-slate-600">
+               <li>Detail point one about the book.</li>
+               <li>Information about the book's edition or format.</li>
+            </ul> */}
           </div>
         </div>
       </div>
 
       {/* Reviews Section */}
-      <div className="mt-12">
-        <h2 className="text-2xl font-semibold mb-4">Customer Reviews</h2>
+      <div id="reviews" className="mt-16 pt-8 border-t">
+        <h2 className="text-3xl font-bold mb-6">Customer Reviews</h2>
         {reviewStatus === 'loading' && <p>Loading reviews...</p>}
-        {reviews.length === 0 && <p>No reviews yet.</p>}
-        {reviews.map(review => (
-          <div key={review.id} className="mb-4 border-b pb-2">
-            <p className="text-sm text-gray-700">{review.comment}</p>
-            <p className="text-xs text-gray-500">Rating: {review.rating} ★ by {review.userName}</p>
-          </div>
-        ))}
 
         {/* Add Review Form */}
         {isAuthenticated && (
-          <form onSubmit={handleReviewSubmit} className="mt-6 space-y-4">
+          <form onSubmit={handleReviewSubmit} className="mb-8 p-6 bg-slate-50 rounded-lg space-y-4">
+            <h3 className="text-xl font-semibold">Write a Review</h3>
             <textarea
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              placeholder="Write your review..."
-              className="w-full p-2 border rounded"
+              placeholder="Share your thoughts on this book..."
+              className="w-full p-3 border rounded-md focus:ring-2 focus:ring-slate-400"
+              rows="4"
               required
             />
-            <select
-              value={rating}
-              onChange={(e) => setRating(Number(e.target.value))}
-              className="p-2 border rounded"
-            >
-              {[5, 4, 3, 2, 1].map(r => (
-                <option key={r} value={r}>{r} ★</option>
-              ))}
-            </select>
-            <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">
-              Submit Review
-            </button>
+            <div className="flex items-center gap-4">
+              <select
+                value={rating}
+                onChange={(e) => setRating(Number(e.target.value))}
+                className="p-2 border rounded-md"
+              >
+                {[5, 4, 3, 2, 1].map(r => (
+                  <option key={r} value={r}>{r} ★</option>
+                ))}
+              </select>
+              <button type="submit" className="px-6 py-2 bg-slate-800 text-white font-semibold rounded-md hover:bg-slate-900">
+                Submit Review
+              </button>
+            </div>
           </form>
         )}
+        
+        {/* Display Reviews */}
+        <div className="space-y-6">
+          {reviews.length === 0 && reviewStatus !== 'loading' && <p>Be the first to review this book!</p>}
+          {reviews.map(review => (
+            <div key={review.id} className="border-b pb-4">
+              <StarRating rating={review.rating} />
+              <p className="text-md text-gray-800 my-2">{review.comment}</p>
+              <p className="text-xs text-gray-500">by {review.userName} on {new Date(review.createdAt).toLocaleDateString()}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { logout } from './../store/authSlice';
+import { logout } from '../store/authSlice';
 
 // A custom hook to detect clicks outside of a component
 const useOutsideAlerter = (ref, callback) => {
@@ -157,10 +157,10 @@ export default function NavBar() {
                 </li>
                 {/* You can map these "About", "Careers", etc., to actual routes or remove them if not needed */}
                 <li>
-                  <a className="text-gray-500 transition hover:text-gray-500/75" href="#"> About </a>
+                  <a className="text-gray-500 transition hover:text-gray-500/75" href="/about"> About </a>
                 </li>
                 <li>
-                  <a className="text-gray-500 transition hover:text-gray-500/75" href="#"> Careers </a>
+                  <a className="text-gray-500 transition hover:text-gray-500/75" href="/ContactUs"> Contact us </a>
                 </li>
                 {isAdmin && (
                   <li>
