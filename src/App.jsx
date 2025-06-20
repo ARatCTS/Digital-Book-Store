@@ -19,6 +19,8 @@ import OrderManagement from './admin/OrderManagement';
 import ReviewManagement from './admin/ReviewManagement';
 import PaymentCompletePage from './cart/PaymentCompletePage';
 import ErrorPage from './common/ErrorPage';
+import { ContactUs } from './common/ContactUs';
+import { About } from './common/About';
 
 function App() {
   return (
@@ -34,6 +36,8 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/cart" element={<CartPage />} />
+            <Route path="/contactUs" element={<ContactUs/>}/>
+            <Route path="/about" element={<About/>}/>
 
             {/* --- Customer Protected Routes --- */}
             <Route path="/profile" element={<ProtectedRoute><ProfilePage/></ProtectedRoute>} />

@@ -1,12 +1,46 @@
-// src/components/common/HomePage.js (within the HomePage component)
+import React from 'react';
+import { Link } from 'react-router-dom';
 
-export default function UserSection ( user ) {
-    <div className="bg-white p-8 rounded-xl shadow-lg">
-        <h1 className="text-3xl font-bold text-gray-800">Welcome back, {user?.name}!</h1>
-        <p className="text-gray-600 mt-2">Ready to dive into a new book? Here are some quick links to get you started.</p>
-        <div className="mt-6 flex space-x-4">
-            <Link to="/books" className="px-6 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600">Browse Books</Link>
-            <Link to="/orders" className="px-6 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300">View My Orders</Link>
+/**
+ * A welcome component for logged-in users.
+ * @param {{ user: { name: string } }} props - The component expects a user object prop.
+ */
+const UserSection = ({ user }) => {
+  return (
+    <div className="bg-slate-50 dark:bg-gray-800 border-y dark:border-gray-700 my-10 sm:my-20">
+      <div className="py-12 px-6 sm:px-6 sm:py-20">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-center text-3xl font-semibold tracking-tight text-black dark:text-white sm:text-4xl">
+            {/* Using the personalized greeting from your original code */}
+            Welcome back, {user?.name || 'Reader'}!
+          </h2>
+          <p className="mx-auto mt-4 sm:mt-6 max-w-xl text-md sm:text-lg sm:leading-relaxed text-gray-600 dark:text-gray-300">
+            {/* Using the descriptive text from your original code */}
+            Ready to dive into a new book? Here are some quick links to get you started.
+          </p>
+          <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-x-6">
+            
+            {/* Applying the new design's primary button style to the "Browse Books" link */}
+            <Link
+              to="/books"
+              className="flex items-center justify-center w-full sm:w-auto min-w-[160px] px-8 py-3 rounded-full font-semibold tracking-wide border transition ease-in-out duration-150 bg-black dark:bg-white text-white dark:text-black border-transparent"
+            >
+              Browse Books
+            </Link>
+            
+            {/* Applying a secondary style for the "View My Orders" link */}
+            <Link
+              to="/orders"
+              className="flex items-center justify-center w-full sm:w-auto min-w-[160px] px-8 py-3 rounded-full font-semibold tracking-wide border transition ease-in-out duration-150 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 border-transparent"
+            >
+              View My Orders
+            </Link>
+
+          </div>
         </div>
+      </div>
     </div>
-}
+  );
+};
+
+export default UserSection;

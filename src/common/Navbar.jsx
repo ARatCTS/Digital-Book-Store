@@ -160,7 +160,7 @@ export default function NavBar() {
                   <a className="text-gray-500 transition hover:text-gray-500/75" href="/about"> About </a>
                 </li>
                 <li>
-                  <a className="text-gray-500 transition hover:text-gray-500/75" href="/ContactUs"> Contact us </a>
+                  <a className="text-gray-500 transition hover:text-gray-500/75" href="/contactUs"> Contact us </a>
                 </li>
                 {isAdmin && (
                   <li>
