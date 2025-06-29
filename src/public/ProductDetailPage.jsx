@@ -9,7 +9,7 @@ import { fetchReviewsByBookId, addReview } from '../store/reviewSlice';
 const StarRating = ({ rating }) => {
   const totalStars = 5;
   // Ensure rating is a number and handle potential NaN or undefined
-  const filledStars = Math.round(Number(rating) || 0); 
+  const filledStars = Math.round(Number(rating) || 0);
   return (
     <div className="flex items-center space-x-1">
       {[...Array(totalStars)].map((_, index) => (
@@ -133,7 +133,7 @@ export default function ProductDetailPage() {
         {/* Placeholder for Image Gallery */}
         <div className="col-span-1 lg:col-span-2 lg:sticky top-0"> {/* Adjusted col-span for image */}
            <div className="bg-gray-100 rounded-lg h-[550px] flex items-center justify-center overflow-hidden"> {/* Added overflow-hidden */}
-            {book.image ? (
+           {book.image ? (
              <img src={book.image} alt={book.title} className='object-contain max-h-full max-w-full'
                onError={(e) => {
                  e.target.onerror = null;
@@ -151,6 +151,10 @@ export default function ProductDetailPage() {
           <div>
             <h2 className="text-3xl font-extrabold text-slate-900">{book.title}</h2>
             <p className="text-lg text-slate-500 mt-2">by {book.authorName}</p>
+            {/* New: Display Category Name */}
+            {book.categoryName && (
+                <p className="mt-0.5 text-base text-slate-500">Category: {book.categoryName}</p>
+            )}
           </div>
 
           <div className="flex items-center space-x-4 mt-6">

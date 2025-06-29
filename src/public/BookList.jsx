@@ -10,6 +10,8 @@ export default function BookList() {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('');
   const [priceRange, setPriceRange] = useState({ from: '', to: '' });
+  const [selectedAuthor, setSelectedAuthor] = useState(''); // State for author filter
+  const [selectedCategory, setSelectedCategory] = useState(''); // New state for category filter
   const [currentPage, setCurrentPage] = useState(1);
   const booksPerPage = 6;
 
@@ -19,51 +21,103 @@ export default function BookList() {
     }
   }, [status, dispatch]);
 
+  // Reset pagination when filters or search terms change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, sortBy, priceRange, selectedAuthor, selectedCategory]); // Add selectedCategory to dependencies
+
+
   const resetFilters = () => {
     setSortBy('');
     setPriceRange({ from: '', to: '' });
     setSearchTerm('');
-    setCurrentPage(1);
+    setSelectedAuthor(''); // Reset author filter
+    setSelectedCategory(''); // Reset category filter
+    // setCurrentPage(1); // No need to set here, useEffect handles it
   };
+
+  // Derive unique authors from the fetched books
+  const uniqueAuthors = useMemo(() => {
+    const authorsSet = new Set();
+    books.forEach(book => {
+      if (book.authorName) {
+        authorsSet.add(book.authorName);
+      }
+    });
+    return [...authorsSet].sort();
+  }, [books]); // Re-calculate when 'books' changes
+
+  // Derive unique categories from the fetched books
+  const uniqueCategories = useMemo(() => {
+    const categoriesSet = new Set();
+    books.forEach(book => {
+      // Assuming 'categoryName' is the property for category name in each book object
+      if (book.categoryName) {
+        categoriesSet.add(book.categoryName);
+      }
+    });
+    return [...categoriesSet].sort();
+  }, [books]); // Re-calculate when 'books' changes
 
   const filteredBooks = useMemo(() => {
     let result = [...books];
 
     if (searchTerm) {
       result = result.filter((book) =>
-        book.title.toLowerCase().includes(searchTerm.toLowerCase())
+        (book.title && book.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (book.authorName && book.authorName.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
 
-    if (priceRange.from) {
+    if (priceRange.from !== '') {
       result = result.filter((book) => book.price >= parseFloat(priceRange.from));
     }
 
-    if (priceRange.to) {
+    if (priceRange.to !== '') {
       result = result.filter((book) => book.price <= parseFloat(priceRange.to));
     }
 
+    // Filter by selected author
+    if (selectedAuthor) {
+      result = result.filter((book) => book.authorName && book.authorName === selectedAuthor);
+    }
+
+    // New: Filter by selected category
+    if (selectedCategory) {
+      result = result.filter((book) => book.categoryName && book.categoryName === selectedCategory);
+    }
+
     if (sortBy) {
-      const [key, order] = sortBy.split(', ');
+      const [key, order] = sortBy.split(',');
+      const actualKey = key.trim();
+
       result.sort((a, b) => {
-        if (a[key] < b[key]) return order === 'ASC' ? -1 : 1;
-        if (a[key] > b[key]) return order === 'ASC' ? 1 : -1;
-        return 0;
+        const valA = a[actualKey];
+        const valB = b[actualKey];
+
+        const safeValA = valA === undefined || valA === null ? (order === 'ASC' ? '' : 'zzzzz') : valA;
+        const safeValB = valB === undefined || valB === null ? (order === 'ASC' ? '' : 'zzzzz') : valB;
+
+        if (typeof safeValA === 'string' && typeof safeValB === 'string') {
+          return order === 'ASC' ? safeValA.localeCompare(safeValB) : safeValB.localeCompare(safeValA);
+        }
+        return order === 'ASC' ? safeValA - safeValB : safeValB - safeValA;
       });
     }
 
     return result;
-  }, [books, searchTerm, priceRange, sortBy]);
+  }, [books, searchTerm, priceRange, selectedAuthor, selectedCategory, sortBy]); // Add selectedCategory to dependencies
 
   const paginatedBooks = useMemo(() => {
     const start = (currentPage - 1) * booksPerPage;
-    return filteredBooks.slice(start, start + booksPerPage);
-  }, [filteredBooks, currentPage]);
+    const end = start + booksPerPage;
+    return filteredBooks.slice(start, end);
+  }, [filteredBooks, currentPage, booksPerPage]);
 
   const totalPages = Math.ceil(filteredBooks.length / booksPerPage);
 
   if (status === 'loading') return <p className="text-center">Loading books...</p>;
-  if (status === 'failed') return <p className="text-center text-red-500">Error: {error.message || 'Could not fetch books'}</p>;
+  if (status === 'failed') return <p className="text-center text-red-500">Error: {error?.message || 'Could not fetch books'}</p>;
 
   return (
     <section className="max-w-screen-xl mx-auto px-4 py-8">
@@ -71,26 +125,28 @@ export default function BookList() {
         <h2 className="text-2xl font-bold text-gray-900">Book Collection</h2>
         <input
           type="text"
-          placeholder="Search books..."
+          placeholder="Search by title or author..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="mt-4 w-full max-w-md p-2 border rounded-md"
         />
       </header>
 
-      <div className="mb-6 flex flex-wrap gap-4">
+      <div className="mb-6 flex flex-wrap gap-4 items-center">
+        {/* Sort By */}
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
           className="p-2 border rounded-md"
         >
           <option value="">Sort By</option>
-          <option value="title, ASC">Title ASC</option>
-          <option value="title, DESC">Title DESC</option>
-          <option value="price, ASC">Price ASC</option>
-          <option value="price, DESC">Price DESC</option>
+          <option value="title,ASC">Title (A-Z)</option>
+          <option value="title,DESC">Title (Z-A)</option>
+          <option value="price,ASC">Price (Low to High)</option>
+          <option value="price,DESC">Price (High to Low)</option>
         </select>
 
+        {/* Price Range */}
         <input
           type="number"
           placeholder="Price from"
@@ -106,35 +162,80 @@ export default function BookList() {
           className="p-2 border rounded-md"
         />
 
+        {/* Author Filter */}
+        <select
+          value={selectedAuthor}
+          onChange={(e) => setSelectedAuthor(e.target.value)}
+          className="p-2 border rounded-md"
+        >
+          <option value="">All Authors</option>
+          {uniqueAuthors.map((authorName) => (
+            <option key={authorName} value={authorName}>
+              {authorName}
+            </option>
+          ))}
+        </select>
+
+        {/* New: Category Filter */}
+        <select
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          className="p-2 border rounded-md"
+        >
+          <option value="">All Categories</option>
+          {uniqueCategories.map((categoryName) => (
+            <option key={categoryName} value={categoryName}>
+              {categoryName}
+            </option>
+          ))}
+        </select>
+
+        {/* Reset Filters Button */}
         <button
           onClick={resetFilters}
-          className="px-4 py-2 bg-red-600 text-white rounded-md"
+          className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
         >
           Reset Filters
         </button>
       </div>
 
+      {/* Conditional Messages for No Books */}
+      {paginatedBooks.length === 0 && filteredBooks.length > 0 && (
+          <p className="text-center text-gray-600">No books found on this page with current filters. Try adjusting page number.</p>
+      )}
+      {filteredBooks.length === 0 && (searchTerm || priceRange.from || priceRange.to || selectedAuthor || selectedCategory) && (
+          <p className="text-center text-gray-600">No books match your current search or filters.</p>
+      )}
+      {status === 'succeeded' && books.length === 0 && !searchTerm && !priceRange.from && !priceRange.to && !selectedAuthor && !selectedCategory && (
+        <p className="text-center text-gray-600">No books available in the collection.</p>
+      )}
+
+
+      {/* Book Cards List */}
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {paginatedBooks.map((book) => (
           <BookCard key={book.id} book={book} />
         ))}
       </ul>
 
-      <div className="mt-8 flex justify-center gap-2">
-        {Array.from({ length: totalPages }, (_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrentPage(i + 1)}
-            className={`px-3 py-1 border rounded ${
-              currentPage === i + 1
-                ? 'bg-gray-800 text-white'
-                : 'bg-white text-gray-800 hover:bg-gray-100'
-            }`}
-          >
-            {i + 1}
-          </button>
-        ))}
-      </div>
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="mt-8 flex justify-center gap-2">
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentPage(i + 1)}
+              className={`px-3 py-1 border rounded ${
+                currentPage === i + 1
+                  ? 'bg-gray-800 text-white'
+                  : 'bg-white text-gray-800 hover:bg-gray-100'
+              }`}
+            >
+              {i + 1}
+            </button>
+          ))}
+        </div>
+      )}
     </section>
   );
 }

@@ -1,19 +1,27 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllReviews, moderateReview, deleteReview } from './../store/reviewSlice';
+
+// Define items per page for reviews
+const ITEMS_PER_PAGE = 10; // You can adjust this value
 
 export default function ReviewManagement() {
     const dispatch = useDispatch();
     // Select 'allReviews' and its 'allReviewsStatus' and 'allReviewsError' from the state
-    // This aligns with how fetchAllReviews populates the state in reviewSlice.js
     const { allReviews: reviews, allReviewsStatus: status, allReviewsError: error } = useSelector(state => state.reviews);
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
         // Fetch all reviews only if the status is 'idle', to avoid multiple fetches on mount
         if (status === 'idle') {
             dispatch(fetchAllReviews());
         }
-    }, [status, dispatch]); // Depend on 'status' to re-dispatch if it changes (e.g., after an action completes)
+        // Reset to page 1 if reviews data changes (e.g., after an action or re-fetch)
+        // This ensures consistent behavior when reviews are added/deleted/moderated
+        setCurrentPage(1); 
+    }, [status, dispatch, reviews.length]); // Depend on 'status', 'dispatch', and 'reviews.length'
 
     const handleApprove = (id) => {
         dispatch(moderateReview({ id, approved: true }));
@@ -24,6 +32,29 @@ export default function ReviewManagement() {
         if (confirmDelete) {
             dispatch(deleteReview(id));
         }
+    };
+
+    // --- Pagination Logic ---
+    const totalPages = Math.ceil(reviews.length / ITEMS_PER_PAGE);
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    // Get only the reviews for the current page
+    const currentReviews = reviews.slice(startIndex, endIndex);
+
+    const goToNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(prevPage => prevPage + 1);
+        }
+    };
+
+    const goToPreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(prevPage => prevPage - 1);
+        }
+    };
+
+    const goToPage = (pageNumber) => {
+        setCurrentPage(pageNumber);
     };
 
     // --- Loading and Error States ---
@@ -47,19 +78,18 @@ export default function ReviewManagement() {
         <div className="bg-white p-6 rounded-xl shadow-lg">
             <h1 className="text-2xl font-bold mb-4">Moderate Reviews</h1>
             <div className="space-y-4">
-                {reviews.length === 0 ? (
+                {currentReviews.length === 0 && status === 'succeeded' ? ( // Check currentReviews for display
                     <p>No reviews available for moderation.</p>
                 ) : (
-                    reviews.map(review => (
+                    currentReviews.map(review => ( // Map over 'currentReviews' for pagination
                         <div key={review.id} className="border p-4 rounded-lg flex flex-col sm:flex-row justify-between items-start sm:items-center">
-                            <div className="mb-2 sm:mb-0 sm:mr-4 flex-grow"> {/* Added flex-grow for better layout */}
+                            <div className="mb-2 sm:mb-0 sm:mr-4 flex-grow">
                                 <p>
                                     <strong>{review.userName || 'Anonymous'}</strong> on 
-                                    {/* Ensure review.bookTitle is available from your backend */}
                                     <em> {review.bookTitle ? review.bookTitle : 'N/A Book Title'}</em>
                                 </p>
                                 <p className="text-yellow-500 my-1">
-                                    Rating: {'★'.repeat(review.rating || 0)} {/* Default to 0 if rating is undefined */}
+                                    Rating: {'★'.repeat(review.rating || 0)}
                                 </p>
                                 <p className="text-gray-600 mt-2">"{review.comment}"</p>
                                 <p className="text-sm mt-1 text-gray-500">
@@ -92,6 +122,37 @@ export default function ReviewManagement() {
                     ))
                 )}
             </div>
+
+            {/* Pagination Controls */}
+            {reviews.length > ITEMS_PER_PAGE && ( // Only show pagination if there are more reviews than ITEMS_PER_PAGE
+                <div className="flex justify-center mt-8 space-x-2">
+                    <button
+                        onClick={goToPreviousPage}
+                        disabled={currentPage === 1}
+                        className="px-4 py-2 border rounded-md text-gray-700 bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Previous
+                    </button>
+                    {[...Array(totalPages)].map((_, index) => (
+                        <button
+                            key={index}
+                            onClick={() => goToPage(index + 1)}
+                            className={`px-4 py-2 border rounded-md ${
+                                currentPage === index + 1 ? 'bg-slate-800 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            }`}
+                        >
+                            {index + 1}
+                        </button>
+                    ))}
+                    <button
+                        onClick={goToNextPage}
+                        disabled={currentPage === totalPages}
+                        className="px-4 py-2 border rounded-md text-gray-700 bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Next
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

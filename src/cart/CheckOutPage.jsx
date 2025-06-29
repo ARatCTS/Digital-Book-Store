@@ -11,8 +11,6 @@ export default function CheckoutPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // No need for selectedPaymentMethod state as we're removing card options
-
     const { items: cartItems } = useSelector(state => state.cart);
     const { isAuthenticated } = useSelector(state => state.auth);
 
@@ -20,43 +18,37 @@ export default function CheckoutPage() {
         if (!isAuthenticated) {
             navigate('/login');
         } else if (cartItems.length === 0 && !isLoading) {
-            navigate('/books');
+            navigate('/books'); // Redirect if cart is empty and not currently processing an order
         }
     }, [cartItems, isAuthenticated, navigate, isLoading]);
 
+    // Calculate total amount from cart items
     const totalAmount = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
 
     const handlePlaceOrder = async () => {
         setIsLoading(true);
         setError(null);
 
-        // Simulate an API call delay
+        // Simulate an API call delay (optional, can be removed in production)
         await new Promise(resolve => setTimeout(resolve, 1500));
 
-        const mockSuccess = true; // Always simulate success for this flow
+        // Dispatch the actual order placement
+        const orderResult = await dispatch(placeOrder({
+            orderItems: cartItems.map(item => ({ bookId: item.id, quantity: item.quantity }))
+        }));
 
-        setIsLoading(false);
+        setIsLoading(false); // Set loading to false regardless of success/failure
 
-        if (mockSuccess) {
-            // Dispatch the actual order placement
-            const orderResult = await dispatch(placeOrder({
-                orderItems: cartItems.map(item => ({ bookId: item.id, quantity: item.quantity }))
-            }));
-
-            if (placeOrder.fulfilled.match(orderResult)) {
-                dispatch(clearCart()); // Clear cart after successful order
-                navigate('/payment-complete'); // Redirect to the new celebration page
-            } else {
-                const errorMsg = orderResult.payload?.message || 'Failed to place order. Please try again.';
-                setError(errorMsg);
-            }
+        if (placeOrder.fulfilled.match(orderResult)) {
+            dispatch(clearCart()); // Clear cart after successful order
+            navigate('/payment-complete'); // Redirect to the new celebration page
         } else {
-            // This part might not be hit if mockSuccess is always true, but good for robust error handling
-            setError('Payment failed. Please try again.');
+            const errorMsg = orderResult.payload?.message || 'Failed to place order. Please try again.';
+            setError(errorMsg);
         }
     };
 
-    if (cartItems.length === 0) {
+    if (cartItems.length === 0 && !isLoading) { // Ensure not to redirect immediately if placing order
         return <p className="text-center">Your cart is empty. Redirecting...</p>;
     }
 
@@ -91,11 +83,41 @@ export default function CheckoutPage() {
 
                     {/* Right Section: Order Summary */}
                     <div className="bg-gray-100 p-6 rounded-md">
-                        <h2 className="text-2xl font-semibold text-slate-900">₹{totalAmount.toFixed(2)}</h2>
+                        <h2 className="text-2xl font-semibold text-slate-900">Order Summary</h2> {/* Changed title for clarity */}
                         <ul className="text-slate-500 font-medium mt-8 space-y-4">
                             {cartItems.map((item) => (
-                                <li key={item.id} className="flex flex-wrap gap-4 text-sm">
-                                    {item.title} x {item.quantity} <span className="ml-auto font-semibold text-slate-900">₹{(item.price * item.quantity).toFixed(2)}</span>
+                                <li key={item.id} className="flex flex-col gap-1 text-sm pb-2 border-b border-gray-200 last:border-b-0">
+                                    <div className="flex justify-between items-baseline">
+                                        <p className="font-semibold text-slate-900">{item.title} <span className="text-gray-600 font-normal">x {item.quantity}</span></p>
+                                        <span className="ml-auto font-semibold text-slate-900">₹{(item.price * item.quantity).toFixed(2)}</span>
+                                    </div>
+                                    <dl className="mt-0.5 space-y-px text-[10px] text-gray-600">
+                                        {item.authorName && (
+                                            <div>
+                                                <dt className="inline">Author:</dt>
+                                                <dd className="inline ml-1">{item.authorName}</dd>
+                                            </div>
+                                        )}
+                                        {item.categoryName && (
+                                            <div>
+                                                <dt className="inline">Category:</dt>
+                                                <dd className="inline ml-1">{item.categoryName}</dd>
+                                            </div>
+                                        )}
+                                        {/* Other details like size/color if applicable to books, otherwise can remove */}
+                                        {item.size && (
+                                            <div>
+                                                <dt className="inline">Size:</dt>
+                                                <dd className="inline ml-1">{item.size}</dd>
+                                            </div>
+                                        )}
+                                        {item.color && (
+                                            <div>
+                                                <dt className="inline">Color:</dt>
+                                                <dd className="inline ml-1">{item.color}</dd>
+                                            </div>
+                                        )}
+                                    </dl>
                                 </li>
                             ))}
                             <li className="flex flex-wrap gap-4 text-[15px] font-semibold text-slate-900 border-t border-gray-300 pt-4">

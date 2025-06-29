@@ -1,59 +1,64 @@
 // src/components/BookCard.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { createSelector } from 'reselect';
 import { addItemToCart } from './../store/cartSlice';
-import { fetchReviewsByBookId } from './../store/reviewSlice'; // Ensure this path is correct
+import { fetchReviewsByBookId } from './../store/reviewSlice';
 import { Link } from 'react-router-dom';
+
+// Memoized selector factory: This function creates a memoized selector
+// for a specific book ID. It lives outside the component to avoid re-creation.
+const makeSelectReviewsForBook = () => createSelector(
+  (state, bookId) => state.reviews.reviewsByBookId[bookId], // Input selector: get the reviews array (or undefined)
+  (reviews) => reviews || [] // Output selector: if reviews is undefined, return an empty array (memoized reference)
+);
 
 export default function BookCard({ book }) {
   const dispatch = useDispatch();
-  const [bookAvailable, setAvailable] = useState(true); // This state isn't currently used in the provided JSX.
+  const [bookAvailable, setAvailable] = useState(true); // Still unused but kept for context
 
-  // Select reviews for the specific book from the normalized state
-  // If reviewsByBookId[book.id] is undefined, default to an empty array
-  const reviews = useSelector((state) => state.reviews.reviewsByBookId[book.id] || []);
-  // Select the specific status for this book's reviews, defaulting to 'idle'
+  // Create a memoized instance of the selector for *this specific book.id*.
+  // `useMemo` ensures that `getReviewsForCurrentBook` (the selector function)
+  // is only re-created if `book.id` changes.
+  const getReviewsForCurrentBook = useMemo(() => makeSelectReviewsForBook(), []); // No dependencies for the factory itself
+
+  // Now, use the memoized selector instance with useSelector.
+  // The second argument `book.id` is passed as an argument to the input selectors.
+  const reviews = useSelector((state) => getReviewsForCurrentBook(state, book.id));
+
+  // These selectors are fine as they don't create new array/object references on every call
   const reviewsStatus = useSelector((state) => state.reviews.statuses[book.id] || 'idle');
-  // Select the specific error for this book's reviews, defaulting to null
   const reviewsError = useSelector((state) => state.reviews.errors[book.id] || null);
 
-
-  // State to hold the calculated average rating
   const [averageRating, setAverageRating] = useState(null);
 
   useEffect(() => {
-    // Dispatch the action to fetch reviews for this specific book
-    // Only dispatch if book.id is available and reviews haven't been loaded or are in a failed state
-    // Adding reviewsStatus check to avoid unnecessary re-fetches if already succeeded or loading
-    // A status of 'idle' means it hasn't been fetched yet. 'failed' means we can retry.
     if (book.id && (reviewsStatus === 'idle' || reviewsStatus === 'failed')) {
       dispatch(fetchReviewsByBookId(book.id));
     }
-  }, [dispatch, book.id, reviewsStatus]); // Re-fetch if book.id changes or reviewsStatus indicates a need
+  }, [dispatch, book.id, reviewsStatus]);
 
   useEffect(() => {
     if (reviewsStatus === 'succeeded') {
       if (reviews.length > 0) {
         const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
         const avg = totalRating / reviews.length;
-        setAverageRating(avg.toFixed(1)); // Format to one decimal place
+        setAverageRating(avg.toFixed(1));
       } else {
-        setAverageRating(null); // No reviews yet
+        setAverageRating(null);
       }
     }
-    // If status is 'loading' or 'failed', averageRating remains its previous value or null
-  }, [reviews, reviewsStatus]); // Recalculate if reviews or status change
+  }, [reviews, reviewsStatus]);
 
   const handleAddToCart = (e) => {
-    e.preventDefault(); // Prevent default link behavior
-    e.stopPropagation(); // Stop event from bubbling up to the Link component
+    e.preventDefault();
+    e.stopPropagation();
     dispatch(addItemToCart(book));
   };
 
-  // The handleBuyNow function is present but not used in the JSX
   const handleBuyNow = (e) => {
-    e.preventDefault(); // Prevent default link behavior
-    e.stopPropagation(); // Stop event from bubbling up to the Link component
+    e.preventDefault();
+    e.stopPropagation();
     console.log(`Buying ${book.title} now!`);
   };
 
@@ -63,34 +68,32 @@ export default function BookCard({ book }) {
         to={`/book/${book.id}`}
         className="group relative flex h-full flex-col overflow-hidden border border-gray-100 bg-white"
       >
-        {/* Black Placeholder with Book Image */}
         <div className="flex h-64 w-full items-center justify-center bg-black text-center transition duration-500 group-hover:scale-105 sm:h-72">
-          {/* Ensure book.image exists and is a valid URL */}
           <img
-            src={book.image}
+            src={book.image || 'https://placehold.co/300x400/b8b8b8/ffffff?text=No+Image'}
             className="w-full h-full object-cover"
             alt={`Cover of ${book.title}`}
             onError={(e) => {
-              // Optional: Provide a fallback image if the URL is broken
-              e.target.onerror = null; // Prevent infinite loop if fallback also fails
-              e.target.src = 'https://via.placeholder.com/200x280?text=No+Image'; // Fallback image
+              e.target.onerror = null;
+              e.target.src = 'https://placehold.co/300x400/b8b8b8/ffffff?text=No+Image';
             }}
           />
         </div>
 
-        {/* Product Details */}
         <div className="relative flex flex-1 flex-col p-6">
           <div className="flex-1">
-            {/* New/Sale Badge - Can be dynamic based on book data */}
             <span className="whitespace-nowrap bg-yellow-400 px-3 py-1.5 text-xs font-medium">
               New
             </span>
 
             <h3 className="mt-4 text-lg font-medium text-gray-900">{book.title}</h3>
             <p className="mt-0.5 text-sm text-gray-500">by {book.authorName}</p>
+            {/* New: Display Category Name */}
+            {book.categoryName && (
+              <p className="mt-0.5 text-xs text-gray-400">Category: {book.categoryName}</p>
+            )}
             <p className="mt-1.5 text-lg font-semibold text-gray-800">₹{book.price.toFixed(2)}</p>
 
-            {/* Display Average Rating */}
             <div className="mt-1">
               {reviewsStatus === 'loading' && (
                 <p className="text-sm text-gray-600">Loading rating...</p>
@@ -118,7 +121,6 @@ export default function BookCard({ book }) {
             )}
           </div>
 
-          {/* Action Buttons */}
           <div className="mt-4 flex gap-4">
             <button
               onClick={handleAddToCart}
@@ -126,15 +128,6 @@ export default function BookCard({ book }) {
             >
               Add to Cart
             </button>
-            {/* If you wish to enable a "Buy Now" button, uncomment and style it.
-                Ensure `handleBuyNow` also has e.preventDefault() and e.stopPropagation()
-            <button
-              onClick={handleBuyNow}
-              className="block w-full rounded-sm bg-blue-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-blue-700"
-            >
-              Buy Now
-            </button>
-            */}
           </div>
         </div>
       </Link>

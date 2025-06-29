@@ -30,30 +30,48 @@ export default function CartPage() {
                                         <li key={item.id} className="flex items-center gap-4">
                                             {/* Black placeholder image */}
                                             <img
-                                                src={item.image}
+                                                src={item.image || 'https://placehold.co/64x64/b8b8b8/ffffff?text=No+Image'} // Added fallback for image src
                                                 alt={item.title}
                                                 className="size-16 rounded-sm object-cover"
+                                                onError={(e) => { // Added error handling for image loading
+                                                    e.target.onerror = null;
+                                                    e.target.src = 'https://placehold.co/64x64/b8b8b8/ffffff?text=No+Image';
+                                                }}
                                             />
 
                                             <div>
                                                 <h3 className="text-sm text-gray-900">{item.title}</h3>
 
                                                 <dl className="mt-0.5 space-y-px text-[10px] text-gray-600">
+                                                    {/* Display Author Name */}
+                                                    {item.authorName && (
+                                                        <div>
+                                                            <dt className="inline">Author:</dt>
+                                                            <dd className="inline ml-1">{item.authorName}</dd>
+                                                        </div>
+                                                    )}
+                                                    {/* Display Category Name */}
+                                                    {item.categoryName && (
+                                                        <div>
+                                                            <dt className="inline">Category:</dt>
+                                                            <dd className="inline ml-1">{item.categoryName}</dd>
+                                                        </div>
+                                                    )}
                                                     {item.size && (
                                                         <div>
                                                             <dt className="inline">Size:</dt>
-                                                            <dd className="inline">{item.size}</dd>
+                                                            <dd className="inline ml-1">{item.size}</dd>
                                                         </div>
                                                     )}
                                                     {item.color && (
                                                         <div>
                                                             <dt className="inline">Color:</dt>
-                                                            <dd className="inline">{item.color}</dd>
+                                                            <dd className="inline ml-1">{item.color}</dd>
                                                         </div>
                                                     )}
                                                     <div>
                                                         <dt className="inline">Price:</dt>
-                                                        <dd className="inline">{item.price.toFixed(2)}</dd> {/* Price without symbol */}
+                                                        <dd className="inline ml-1">₹{item.price.toFixed(2)}</dd>
                                                     </div>
                                                 </dl>
                                             </div>
@@ -116,21 +134,19 @@ export default function CartPage() {
                                         <dl className="space-y-0.5 text-sm text-gray-700">
                                             <div className="flex justify-between">
                                                 <dt>Subtotal</dt>
-                                                <dd>{subtotal.toFixed(2)}</dd> {/* Price without symbol */}
+                                                <dd>₹{subtotal.toFixed(2)}</dd>
                                             </div>
-
-                                            {/* VAT removed */}
 
                                             {discount > 0 && (
                                                 <div className="flex justify-between">
                                                     <dt>Discount</dt>
-                                                    <dd>-{discount.toFixed(2)}</dd> {/* Price without symbol */}
+                                                    <dd>-₹{discount.toFixed(2)}</dd>
                                                 </div>
                                             )}
 
                                             <div className="flex justify-between !text-base font-medium">
                                                 <dt>Total</dt>
-                                                <dd>{totalAmount}</dd> {/* Price without symbol */}
+                                                <dd>₹{totalAmount}</dd>
                                             </div>
                                         </dl>
 
