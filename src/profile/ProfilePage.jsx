@@ -38,11 +38,11 @@ export default function ProfilePage() {
                             {/* The "Edit Profile" button, shown only when not editing */}
                             {!isEditing && (
                                 <button
-                                    onClick={() => setIsEditing(true)}
-                                    className="text-sm font-medium text-blue-600 hover:text-blue-800"
-                                >
-                                    Edit Profile
-                                </button>
+                                onClick={() => setIsEditing(true)}
+                                className="px-3 py-1.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-md hover:bg-gray-100 hover:border-gray-400 transition"
+                              >
+                                Edit Profile
+                              </button>
                             )}
                             {/* The "View Profile" button, shown only when editing */}
                             {isEditing && (

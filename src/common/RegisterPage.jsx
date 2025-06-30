@@ -122,21 +122,21 @@ export default function RegisterPage() {
                 </div>
               )}
 
-              <div className="!mt-12">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full py-2.5 px-4 text-sm font-semibold tracking-wide rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none disabled:bg-blue-400"
-                >
-                  {loading ? 'Registering...' : 'Register'}
-                </button>
-              </div>
+<div className="!mt-12">
+  <button
+    type="submit"
+    disabled={loading}
+    className="w-full py-2.5 px-4 text-sm font-semibold tracking-wide rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none disabled:bg-gray-600"
+  >
+    {loading ? 'Registering...' : 'Register'}
+  </button>
+</div>
 
               <p className="text-slate-900 text-sm !mt-6 text-center">
                 Already have an account?
                 <Link
                   to="/login"
-                  className="text-blue-600 hover:underline ml-1 whitespace-nowrap font-semibold"
+                  className="text-black-600 hover:underline ml-1 whitespace-nowrap font-semibold"
                 >
                   Sign in here
                 </Link>
