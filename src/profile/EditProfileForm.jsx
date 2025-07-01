@@ -35,7 +35,7 @@ export default function EditProfileForm({ user, onSaveSuccess, onCancel }) {
             </div>
             {message && <p className={message.type === 'error' ? 'text-red-500 text-sm' : 'text-green-500 text-sm'}>{message.text}</p>}
             <div className="flex items-center space-x-4 pt-4">
-                <button type="submit" className="px-6 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600">Save Changes</button>
+                <button type="submit" className="px-3 py-1.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-md hover:bg-gray-100 hover:border-gray-400 transition">Save Changes</button>
                 <button type="button" onClick={onCancel} className="px-6 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">Cancel</button>
             </div>
         </form>

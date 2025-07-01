@@ -104,13 +104,23 @@ export default function BookCard({ book }) {
 
           {/* Action Buttons */}
           <div className="mt-4 flex gap-4">
-            <button
-              onClick={handleAddToCart}
-              className="block w-full rounded-sm bg-gray-100 px-4 py-3 text-sm font-medium text-gray-900 transition hover:bg-gray-200"
-            >
-              Add to Cart
-            </button>
-
+            {book.stockQuantity > 0 ? (
+              // If stock is available, show Add to Cart button
+              <button
+                onClick={handleAddToCart}
+                className="block w-full rounded-sm bg-gray-100 px-4 py-3 text-sm font-medium text-gray-900 transition hover:bg-gray-200"
+              >
+                Add to Cart
+              </button>
+            ) : (
+              // If stock is 0 or less, show "Out of Stock" button/message
+              <button
+                disabled // Disable the button
+                className="block w-full cursor-not-allowed rounded-sm bg-red-100 px-4 py-3 text-sm font-medium text-red-700 opacity-75"
+              >
+                Out of Stock
+              </button>
+            )}
           </div>
         </div>
       </Link>
