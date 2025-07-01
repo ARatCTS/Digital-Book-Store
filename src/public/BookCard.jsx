@@ -7,55 +7,39 @@ import { Link } from 'react-router-dom';
 
 export default function BookCard({ book }) {
   const dispatch = useDispatch();
-  const [bookAvailable, setAvailable] = useState(true); // This state isn't currently used in the provided JSX.
-
-  // Select reviews for the specific book from the normalized state
-  // If reviewsByBookId[book.id] is undefined, default to an empty array
+  const [bookAvailable, setAvailable] = useState(true); 
   const reviews = useSelector((state) => state.reviews.reviewsByBookId[book.id] || []);
-  // Select the specific status for this book's reviews, defaulting to 'idle'
   const reviewsStatus = useSelector((state) => state.reviews.statuses[book.id] || 'idle');
-  // Select the specific error for this book's reviews, defaulting to null
   const reviewsError = useSelector((state) => state.reviews.errors[book.id] || null);
 
 
-  // State to hold the calculated average rating
   const [averageRating, setAverageRating] = useState(null);
 
   useEffect(() => {
-    // Dispatch the action to fetch reviews for this specific book
-    // Only dispatch if book.id is available and reviews haven't been loaded or are in a failed state
-    // Adding reviewsStatus check to avoid unnecessary re-fetches if already succeeded or loading
-    // A status of 'idle' means it hasn't been fetched yet. 'failed' means we can retry.
+
     if (book.id && (reviewsStatus === 'idle' || reviewsStatus === 'failed')) {
       dispatch(fetchReviewsByBookId(book.id));
     }
-  }, [dispatch, book.id, reviewsStatus]); // Re-fetch if book.id changes or reviewsStatus indicates a need
+  }, [dispatch, book.id, reviewsStatus]); 
 
   useEffect(() => {
     if (reviewsStatus === 'succeeded') {
       if (reviews.length > 0) {
         const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
         const avg = totalRating / reviews.length;
-        setAverageRating(avg.toFixed(1)); // Format to one decimal place
+        setAverageRating(avg.toFixed(1)); 
       } else {
-        setAverageRating(null); // No reviews yet
+        setAverageRating(null); 
       }
     }
-    // If status is 'loading' or 'failed', averageRating remains its previous value or null
-  }, [reviews, reviewsStatus]); // Recalculate if reviews or status change
+  }, [reviews, reviewsStatus]); 
 
   const handleAddToCart = (e) => {
-    e.preventDefault(); // Prevent default link behavior
-    e.stopPropagation(); // Stop event from bubbling up to the Link component
+    e.preventDefault(); 
+    e.stopPropagation(); 
     dispatch(addItemToCart(book));
   };
 
-  // The handleBuyNow function is present but not used in the JSX
-  const handleBuyNow = (e) => {
-    e.preventDefault(); // Prevent default link behavior
-    e.stopPropagation(); // Stop event from bubbling up to the Link component
-    console.log(`Buying ${book.title} now!`);
-  };
 
   return (
     <li className="flex flex-col">
@@ -126,15 +110,7 @@ export default function BookCard({ book }) {
             >
               Add to Cart
             </button>
-            {/* If you wish to enable a "Buy Now" button, uncomment and style it.
-                Ensure `handleBuyNow` also has e.preventDefault() and e.stopPropagation()
-            <button
-              onClick={handleBuyNow}
-              className="block w-full rounded-sm bg-blue-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-blue-700"
-            >
-              Buy Now
-            </button>
-            */}
+
           </div>
         </div>
       </Link>
