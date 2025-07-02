@@ -8,7 +8,6 @@ import StarRating from './StarRating';
 
 export default function BookCard({ book }) {
   const dispatch = useDispatch();
-  const [bookAvailable, setAvailable] = useState(true); 
   const reviews = useSelector((state) => state.reviews.reviewsByBookId[book.id] || []);
   const reviewsStatus = useSelector((state) => state.reviews.statuses[book.id] || 'idle');
   const reviewsError = useSelector((state) => state.reviews.errors[book.id] || null);
@@ -79,7 +78,7 @@ export default function BookCard({ book }) {
                 <p className="text-sm text-red-500">Error loading rating: {reviewsError.message || 'Unknown error'}</p>
               )}
               {reviewsStatus === 'succeeded' && (
-                <p className="text-sm text-gray-700">
+                <div className="text-sm text-gray-700">
                   {averageRating !== null ? (
                     <>
                       <StarRating rating={averageRating}/>
@@ -87,7 +86,7 @@ export default function BookCard({ book }) {
                   ) : (
                     'No reviews yet'
                   )}
-                </p>
+                </div>
               )}
             </div>
 
