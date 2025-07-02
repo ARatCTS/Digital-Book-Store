@@ -1,6 +1,5 @@
 const StarRating = ({ rating }) => {
   const totalStars = 5;
-  // Ensure rating is a number and handle potential NaN or undefined
   const filledStars = Math.round(Number(rating) || 0);
   return (
     <div className="flex items-center space-x-1">

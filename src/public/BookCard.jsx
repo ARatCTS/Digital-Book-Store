@@ -1,8 +1,7 @@
-// src/components/BookCard.jsx
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItemToCart } from './../store/cartSlice';
-import { fetchReviewsByBookId } from './../store/reviewSlice'; // Ensure this path is correct
+import { fetchReviewsByBookId } from './../store/reviewSlice'; 
 import { Link } from 'react-router-dom';
 import StarRating from './StarRating';
 
@@ -54,12 +53,11 @@ export default function BookCard({ book }) {
             alt={`Cover of ${book.title}`}
             onError={(e) => {
               e.target.onerror = null; 
-              e.target.src = 'https://via.placeholder.com/200x280?text=No+Image'; 
+              e.target.src = `https://placehold.co/300x400/e0b8a4/4a4e4d?text=${book.title}`; 
             }}
           />
         </div>
 
-        {/* Product Details */}
         <div className="relative flex flex-1 flex-col p-6">
           <div className="flex-1">
             <span className="whitespace-nowrap bg-yellow-400 px-3 py-1.5 text-xs font-medium">
@@ -97,7 +95,6 @@ export default function BookCard({ book }) {
             )}
           </div>
 
-          {/* Action Buttons */}
           <div className="mt-4 flex gap-4">
             {book.stockQuantity > 0 ? (
               <button

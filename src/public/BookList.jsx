@@ -172,7 +172,6 @@ export default function BookList() {
           ))}
         </select>
 
-        {/* New: Category Filter */}
         <select
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
@@ -186,7 +185,6 @@ export default function BookList() {
           ))}
         </select>
 
-        {/* Reset Filters Button */}
         <button
           onClick={resetFilters}
           className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
@@ -195,7 +193,6 @@ export default function BookList() {
         </button>
       </div>
 
-      {/* Conditional Messages for No Books */}
       {paginatedBooks.length === 0 && filteredBooks.length > 0 && (
           <p className="text-center text-gray-600">No books found on this page with current filters. Try adjusting page number.</p>
       )}
@@ -207,14 +204,12 @@ export default function BookList() {
       )}
 
 
-      {/* Book Cards List */}
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {paginatedBooks.map((book) => (
           <BookCard key={book.id} book={book} />
         ))}
       </ul>
 
-      {/* Pagination Controls */}
       {totalPages > 1 && (
         <div className="mt-8 flex justify-center gap-2">
           {Array.from({ length: totalPages }, (_, i) => (

@@ -1,8 +1,7 @@
 import React from 'react';
 
 export default function ViewProfile({ user }) {
-    // This component is now purely for displaying user information.
-    // The "Edit" button is handled by the parent ProfilePage.
+
     return (
         <div className="space-y-4">
             <div>

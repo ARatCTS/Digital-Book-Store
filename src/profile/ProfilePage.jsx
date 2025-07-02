@@ -4,38 +4,31 @@ import ViewProfile from './ViewProfile';
 import EditProfileForm from './EditProfileForm';
 
 export default function ProfilePage() {
-    const { user } = useSelector(state => state.auth); // Assuming user object is available
+    const { user } = useSelector(state => state.auth); 
+      const userInitial = user?.email ? user.email.charAt(0).toUpperCase() : '?';
 
-    // This state controls whether the user is viewing or editing their profile.
     const [isEditing, setIsEditing] = useState(false);
 
     return (
         <>
-            {/* Source Sans Pro font import and style are usually in public/index.html or a global CSS file */}
-            {/* <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet" />
-            <style>
-                * {
-                    font-family: 'Source Sans Pro';
-                }
-            </style> */}
+
 
             <div className="mx-4 min-h-screen max-w-screen-xl sm:mx-8 xl:mx-auto">
                 <h1 className="border-b py-6 text-4xl font-semibold">ACCOUNT</h1>
 
-                <div className="pt-3"> {/* Removed grid layout as sidebar is gone */}
-                    <div className="overflow-hidden rounded-xl sm:bg-gray-50 sm:px-8 sm:shadow py-6"> {/* Card now occupies full width */}
+                <div className="pt-3"> 
+                    <div className="overflow-hidden rounded-xl sm:bg-gray-50 sm:px-8 sm:shadow py-6"> 
                         <div className="flex items-center justify-between border-b pb-6">
-                            {/* User Profile Image Placeholder */}
                             <div className="flex items-center">
                                 <img
-                                    src="https://via.placeholder.com/100" // Placeholder image URL
+                                    src={`https://placehold.co/100/e0b8a4/4a4e4d?text=${userInitial}`} 
                                     alt="User Profile"
-                                    className="h-24 w-24 rounded-full object-cover mr-4" // Suitable size
+                                    className="h-24 w-24 rounded-full object-cover mr-4" 
                                 />
+                            
                                 <h1 className="text-3xl font-bold">Your Profile</h1>
                             </div>
 
-                            {/* The "Edit Profile" button, shown only when not editing */}
                             {!isEditing && (
                                 <button
                                 onClick={() => setIsEditing(true)}
@@ -44,7 +37,6 @@ export default function ProfilePage() {
                                 Edit Profile
                               </button>
                             )}
-                            {/* The "View Profile" button, shown only when editing */}
                             {isEditing && (
                                 <button
                                     onClick={() => setIsEditing(false)}
@@ -56,7 +48,6 @@ export default function ProfilePage() {
                         </div>
 
                         <div className="pt-4">
-                            {/* Based on the `isEditing` state, show either the view or the edit component. */}
                             {isEditing ? (
                                 <EditProfileForm
                                     user={user}

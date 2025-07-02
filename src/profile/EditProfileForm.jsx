@@ -16,7 +16,6 @@ export default function EditProfileForm({ user, onSaveSuccess, onCancel }) {
         setMessage('');
         const result = await dispatch(updateUserProfile(formData));
         if (updateUserProfile.fulfilled.match(result)) {
-            // On success, call the callback to switch back to ViewProfile mode.
             onSaveSuccess();
         } else {
             setMessage({ type: 'error', text: result.payload?.message || 'Failed to update profile.' });

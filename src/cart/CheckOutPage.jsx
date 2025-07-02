@@ -69,7 +69,7 @@ export default function CheckoutPage() {
                             <button
                                 type="button"
                                 onClick={handlePlaceOrder}
-                                className="mt-8 w-full py-3 text-[15px] font-medium bg-purple-500 text-white rounded-md hover:bg-purple-600 tracking-wide cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                className="mt-8 w-full py-3 text-[15px] font-medium bg-gray-600 text-white rounded-md hover:bg-stone-900 tracking-wide cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed"
                                 disabled={isLoading}
                             >
                                 {isLoading ? 'Processing Payment...' : `Pay Now (₹${totalAmount.toFixed(2)})`}

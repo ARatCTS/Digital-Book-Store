@@ -40,8 +40,12 @@ const UserMenu = ({ user, onLogout }) => {
             className="size-10 object-cover"
           />
         ) : (
-          <div className="size-10 bg-blue-500 text-white flex items-center justify-center rounded-full font-bold text-lg">
-            {userInitial}
+          <div className="size-10  text-white flex items-center justify-center rounded-full font-bold text-lg">
+            <img
+                                    src={`https://placehold.co/10/e0b8a4/4a4e4d?text=${userInitial}`} // Placeholder image URL
+                                    alt="User Profile"
+                                    className="h-full w-full rounded-full object-cover " // Suitable size
+                                />
           </div>
         )}
       </button>
@@ -58,7 +62,7 @@ const UserMenu = ({ user, onLogout }) => {
               role="menuitem"
               onClick={() => setIsOpen(false)}
             >
-              My profile
+              My Profile
             </Link>
             <Link
               to="/orders"

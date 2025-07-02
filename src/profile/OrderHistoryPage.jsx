@@ -2,29 +2,24 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserOrders } from './../store/orderSlice';
 
-// Define items per page for orders
-const ITEMS_PER_PAGE = 5; // You can adjust this value as needed
+const ITEMS_PER_PAGE = 5; 
 
 export default function OrderHistoryPage() {
     const dispatch = useDispatch();
     const { user } = useSelector(state => state.auth);
-    const { userOrders, status, error } = useSelector(state => state.orders); // Destructure error
+    const { userOrders, status, error } = useSelector(state => state.orders); 
 
-    // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
-        // console.log("User object:", user); // This will show the correct structure
         if (user?.id) {
             dispatch(fetchUserOrders(user.id));
         }
-        // Reset to page 1 if userOrders data changes
         setCurrentPage(1);
-    }, [user, dispatch, userOrders.length]); // Add userOrders.length to dependencies
+    }, [user, dispatch, userOrders.length]); 
 
-    // Helper function to get status styling
-    const getStatusClass = (orderStatus) => { // Renamed parameter to avoid conflict
-        switch ((orderStatus || '').toLowerCase()) { // Added fallback for undefined status
+    const getStatusClass = (orderStatus) => { 
+        switch ((orderStatus || '').toLowerCase()) { 
             case 'delivered':
                 return 'bg-green-100 text-green-600';
             case 'pending':
@@ -33,18 +28,14 @@ export default function OrderHistoryPage() {
                 return 'bg-red-100 text-red-600';
             case 'shipped':
                 return 'bg-yellow-100 text-yellow-600';
-            case 'processing': // Added 'processing' status
-                return 'bg-purple-100 text-purple-600';
             default:
                 return 'bg-gray-100 text-gray-600';
         }
     };
 
-    // --- Pagination Logic ---
     const totalPages = Math.ceil(userOrders.length / ITEMS_PER_PAGE);
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
-    // Get only the orders for the current page
     const currentOrders = userOrders.slice(startIndex, endIndex);
 
     const goToNextPage = () => {
@@ -63,7 +54,6 @@ export default function OrderHistoryPage() {
         setCurrentPage(pageNumber);
     };
 
-    // --- Loading and Error States ---
     if (status === 'loading') {
         return <p className="text-center py-8">Loading your orders...</p>;
     }
@@ -86,14 +76,12 @@ export default function OrderHistoryPage() {
                 </div>
 
                 <div className="divide-y divide-gray-300 mt-6">
-                    {currentOrders.map(order => ( // Map over 'currentOrders' for pagination
+                    {currentOrders.map(order => ( 
                         <div key={order.id} className="grid grid-cols-1 md:grid-cols-5 items-start justify-between gap-6 py-4">
-                            {/* Order Details Column */}
                             <div className="md:col-span-2 flex flex-col items-start gap-2">
                                 <h6 className="text-[15px] font-semibold text-slate-900">Order Details</h6>
                                 <p className="text-[15px] text-slate-500 font-medium">Order ID: <span className="ml-1 text-slate-900">#{String(order.id || '').substring(0, 8)}</span></p>
 
-                                {/* List of Ordered Books */}
                                 <div className="mt-2 space-y-1">
                                     {order.orderItems && order.orderItems.length > 0 ? (
                                         <>
@@ -112,7 +100,6 @@ export default function OrderHistoryPage() {
                                 </div>
                             </div>
 
-                            {/* Date Column */}
                             <div>
                                 <h6 className="text-[15px] font-medium text-slate-500">Order Date</h6>
                                 <p className="text-[15px] text-slate-900 font-medium mt-2">
@@ -124,7 +111,6 @@ export default function OrderHistoryPage() {
                                 </p>
                             </div>
 
-                            {/* Status Column */}
                             <div>
                                 <h6 className="text-[15px] font-medium text-slate-500">Status</h6>
                                 <p className={`text-[13px] font-medium mt-2 inline-block rounded-md py-1.5 px-3 ${getStatusClass(order.status)}`}>
@@ -132,7 +118,6 @@ export default function OrderHistoryPage() {
                                 </p>
                             </div>
 
-                            {/* Price Column */}
                             <div className="md:ml-auto">
                                 <h6 className="text-[15px] font-medium text-slate-500">Total Price</h6>
                                 <p className="text-[15px] text-slate-900 font-medium mt-2">
@@ -143,8 +128,7 @@ export default function OrderHistoryPage() {
                     ))}
                 </div>
 
-                {/* Pagination Controls */}
-                {userOrders.length > ITEMS_PER_PAGE && ( // Only show pagination if more than ITEMS_PER_PAGE orders
+                {userOrders.length > ITEMS_PER_PAGE && ( 
                     <div className="flex justify-center mt-8 space-x-2">
                         <button
                             onClick={goToPreviousPage}
