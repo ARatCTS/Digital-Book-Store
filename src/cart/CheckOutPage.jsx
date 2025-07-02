@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { placeOrder } from './../store/orderSlice';
-import { clearCart } from './../store/cartSlice'; // Make sure clearCart is imported
+import { clearCart } from './../store/cartSlice'; 
 
 export default function CheckoutPage() {
     const dispatch = useDispatch();
@@ -18,37 +18,34 @@ export default function CheckoutPage() {
         if (!isAuthenticated) {
             navigate('/login');
         } else if (cartItems.length === 0 && !isLoading) {
-            navigate('/books'); // Redirect if cart is empty and not currently processing an order
+            navigate('/books'); 
         }
     }, [cartItems, isAuthenticated, navigate, isLoading]);
 
-    // Calculate total amount from cart items
     const totalAmount = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
 
     const handlePlaceOrder = async () => {
         setIsLoading(true);
         setError(null);
 
-        // Simulate an API call delay (optional, can be removed in production)
         await new Promise(resolve => setTimeout(resolve, 1500));
 
-        // Dispatch the actual order placement
         const orderResult = await dispatch(placeOrder({
             orderItems: cartItems.map(item => ({ bookId: item.id, quantity: item.quantity }))
         }));
 
-        setIsLoading(false); // Set loading to false regardless of success/failure
+        setIsLoading(false); 
 
         if (placeOrder.fulfilled.match(orderResult)) {
-            dispatch(clearCart()); // Clear cart after successful order
-            navigate('/payment-complete'); // Redirect to the new celebration page
+            dispatch(clearCart()); 
+            navigate('/payment-complete'); 
         } else {
             const errorMsg = orderResult.payload?.message || 'Failed to place order. Please try again.';
             setError(errorMsg);
         }
     };
 
-    if (cartItems.length === 0 && !isLoading) { // Ensure not to redirect immediately if placing order
+    if (cartItems.length === 0 && !isLoading) { 
         return <p className="text-center">Your cart is empty. Redirecting...</p>;
     }
 
@@ -56,7 +53,6 @@ export default function CheckoutPage() {
         <section className="bg-white p-4">
             <div className="md:max-w-5xl max-w-xl mx-auto">
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {/* Left Section: Payment Action */}
                     <div className="lg:col-span-2 max-md:order-1">
                         <h2 className="text-3xl font-semibold text-slate-900">Make a payment</h2>
                         <p className="text-slate-500 text-sm mt-4">Complete your transaction swiftly and securely with our easy-to-use payment process.</p>
@@ -81,9 +77,8 @@ export default function CheckoutPage() {
                         </div>
                     </div>
 
-                    {/* Right Section: Order Summary */}
                     <div className="bg-gray-100 p-6 rounded-md">
-                        <h2 className="text-2xl font-semibold text-slate-900">Order Summary</h2> {/* Changed title for clarity */}
+                        <h2 className="text-2xl font-semibold text-slate-900">Order Summary</h2> 
                         <ul className="text-slate-500 font-medium mt-8 space-y-4">
                             {cartItems.map((item) => (
                                 <li key={item.id} className="flex flex-col gap-1 text-sm pb-2 border-b border-gray-200 last:border-b-0">
@@ -104,7 +99,6 @@ export default function CheckoutPage() {
                                                 <dd className="inline ml-1">{item.categoryName}</dd>
                                             </div>
                                         )}
-                                        {/* Other details like size/color if applicable to books, otherwise can remove */}
                                         {item.size && (
                                             <div>
                                                 <dt className="inline">Size:</dt>

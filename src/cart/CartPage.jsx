@@ -6,11 +6,9 @@ import { Link } from 'react-router-dom';
 export default function CartPage() {
     const dispatch = useDispatch();
     const { items: cartItems } = useSelector(state => state.cart);
-
-    // Calculate subtotal (VAT removed)
     const subtotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
-    const discount = 0; // No discount applied in this example, based on your Redux state
-    const totalAmount = (subtotal - discount).toFixed(2); // Total is now just subtotal - discount
+    const discount = 0; 
+    const totalAmount = (subtotal - discount).toFixed(2); 
 
     return (
         <section>
@@ -28,12 +26,11 @@ export default function CartPage() {
                                 <ul className="space-y-4">
                                     {cartItems.map((item) => (
                                         <li key={item.id} className="flex items-center gap-4">
-                                            {/* Black placeholder image */}
                                             <img
                                                 src={item.image || 'https://placehold.co/64x64/b8b8b8/ffffff?text=No+Image'} // Added fallback for image src
                                                 alt={item.title}
                                                 className="size-16 rounded-sm object-cover"
-                                                onError={(e) => { // Added error handling for image loading
+                                                onError={(e) => { 
                                                     e.target.onerror = null;
                                                     e.target.src = 'https://placehold.co/64x64/b8b8b8/ffffff?text=No+Image';
                                                 }}
@@ -43,14 +40,12 @@ export default function CartPage() {
                                                 <h3 className="text-sm text-gray-900">{item.title}</h3>
 
                                                 <dl className="mt-0.5 space-y-px text-[10px] text-gray-600">
-                                                    {/* Display Author Name */}
                                                     {item.authorName && (
                                                         <div>
                                                             <dt className="inline">Author:</dt>
                                                             <dd className="inline ml-1">{item.authorName}</dd>
                                                         </div>
                                                     )}
-                                                    {/* Display Category Name */}
                                                     {item.categoryName && (
                                                         <div>
                                                             <dt className="inline">Category:</dt>
@@ -82,7 +77,7 @@ export default function CartPage() {
                                                         type="button"
                                                         onClick={() => dispatch(decrementQuantity(item.id))}
                                                         className="h-8 w-8 rounded-sm border border-gray-200 bg-gray-50 text-center text-xs text-gray-600 hover:bg-gray-100"
-                                                        disabled={item.quantity <= 1} // Disable if quantity is 1
+                                                        disabled={item.quantity <= 1} 
                                                     >
                                                         -
                                                     </button>
@@ -91,7 +86,7 @@ export default function CartPage() {
                                                         type="number"
                                                         min="1"
                                                         value={item.quantity}
-                                                        readOnly // Make it read-only as buttons control quantity
+                                                        readOnly 
                                                         id={`qty-${item.id}`}
                                                         className="h-8 w-12 rounded-sm border-gray-200 bg-gray-50 p-0 text-center text-xs text-gray-600 [-moz-appearance:_textfield] focus:outline-hidden [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none mx-1"
                                                     />
