@@ -48,12 +48,10 @@ export default function BookCard({ book }) {
         to={`/book/${book.id}`}
         className="group relative flex h-full flex-col overflow-hidden border border-gray-100 bg-white"
       >
-        {/* Black Placeholder with Book Image */}
-        <div className="flex h-64 w-full items-center justify-center bg-black text-center transition duration-500 group-hover:scale-105 sm:h-72">
-          {/* Ensure book.image exists and is a valid URL */}
-          <img
+        <div className="flex h-full w-full items-center justify-center bg-white text-center transition duration-500 group-hover:scale-105 sm:h-72">
+         <img
             src={book.image}
-            className="w-full h-full object-cover"
+            className="w-50 h-70 object-fill"
             alt={`Cover of ${book.title}`}
             onError={(e) => {
               e.target.onerror = null; 
@@ -73,7 +71,6 @@ export default function BookCard({ book }) {
             <p className="mt-0.5 text-sm text-gray-500">by {book.authorName}</p>
             <p className="mt-1.5 text-lg font-semibold text-gray-800">₹{book.price.toFixed(2)}</p>
 
-            {/* Display Average Rating */}
             <div className="mt-1">
               {reviewsStatus === 'loading' && (
                 <p className="text-sm text-gray-600">Loading rating...</p>
