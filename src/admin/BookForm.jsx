@@ -4,7 +4,7 @@ import { addBook, updateBook} from './../store/bookSlice';
 
 export default function BookForm({ book, closeModal }) {
   const [formData, setFormData] = useState({
-    title: '', authorName: '', categoryName: '', price: '', stockQuantity: '', image: ''
+    title: '', authorName: '', categoryName: '', price: '', stockQuantity: '', image: '',description:''
   });
   const dispatch = useDispatch();
 
@@ -17,6 +17,7 @@ export default function BookForm({ book, closeModal }) {
         price: book.price || '',
         stockQuantity: book.stockQuantity || '',
         image: book.image || '',
+        description:book.description||'',
       });
     }
   }, [book]);
@@ -46,7 +47,8 @@ export default function BookForm({ book, closeModal }) {
           <input name="price" type="number" placeholder="Price" value={formData.price} onChange={handleChange} className="w-full p-2 border rounded"/>
           <input name="stockQuantity" type="number" placeholder="Stock" value={formData.stockQuantity} onChange={handleChange} className="w-full p-2 border rounded"/>
           <input name="image" type="text" placeholder="image URL" value={formData.image} onChange={handleChange} className="w-full p-2 border rounded"/>
-          <div className="flex justify-end space-x-4">
+          <input name="description" type='text' placeholder='description' value={formData.description} onChange={handleChange} className="w-full p-2 border rounded"/>
+          <div className="flex justify-end space-x-4"> 
             <button type="button" onClick={closeModal} className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
             <button type="submit" className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">Save</button>
           </div>
