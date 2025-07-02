@@ -56,9 +56,8 @@ export default function BookCard({ book }) {
             className="w-full h-full object-cover"
             alt={`Cover of ${book.title}`}
             onError={(e) => {
-              // Optional: Provide a fallback image if the URL is broken
-              e.target.onerror = null; // Prevent infinite loop if fallback also fails
-              e.target.src = 'https://via.placeholder.com/200x280?text=No+Image'; // Fallback image
+              e.target.onerror = null; 
+              e.target.src = 'https://via.placeholder.com/200x280?text=No+Image'; 
             }}
           />
         </div>
@@ -66,7 +65,6 @@ export default function BookCard({ book }) {
         {/* Product Details */}
         <div className="relative flex flex-1 flex-col p-6">
           <div className="flex-1">
-            {/* New/Sale Badge - Can be dynamic based on book data */}
             <span className="whitespace-nowrap bg-yellow-400 px-3 py-1.5 text-xs font-medium">
               New
             </span>
@@ -106,7 +104,6 @@ export default function BookCard({ book }) {
           {/* Action Buttons */}
           <div className="mt-4 flex gap-4">
             {book.stockQuantity > 0 ? (
-              // If stock is available, show Add to Cart button
               <button
                 onClick={handleAddToCart}
                 className="block w-full rounded-sm bg-gray-100 px-4 py-3 text-sm font-medium text-gray-900 transition hover:bg-gray-200"
@@ -114,9 +111,8 @@ export default function BookCard({ book }) {
                 Add to Cart
               </button>
             ) : (
-              // If stock is 0 or less, show "Out of Stock" button/message
               <button
-                disabled // Disable the button
+                disabled 
                 className="block w-full cursor-not-allowed rounded-sm bg-red-100 px-4 py-3 text-sm font-medium text-red-700 opacity-75"
               >
                 Out of Stock

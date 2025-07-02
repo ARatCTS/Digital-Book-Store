@@ -5,8 +5,6 @@ import { fetchBooks } from '../store/bookSlice';
 import { addItemToCart } from '../store/cartSlice';
 import { fetchReviewsByBookId, addReview } from '../store/reviewSlice';
 import StarRating from './StarRating';
-// A small component to render star ratings
-
 
 
 export default function ProductDetailPage() {
@@ -30,10 +28,9 @@ export default function ProductDetailPage() {
   const book = allBooks.find(b => b.id.toString() === bookId);
 
   const [comment, setComment] = useState('');
-  const [rating, setRating] = useState(5); // Default rating for new review form
+  const [rating, setRating] = useState(5); 
 
   useEffect(() => {
-    // Only fetch books if the list is empty AND not already loading/succeeded
     if (bookStatus === 'idle' && allBooks.length === 0) {
       dispatch(fetchBooks());
     }

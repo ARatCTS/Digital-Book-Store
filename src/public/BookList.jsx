@@ -10,8 +10,8 @@ export default function BookList() {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('');
   const [priceRange, setPriceRange] = useState({ from: '', to: '' });
-  const [selectedAuthor, setSelectedAuthor] = useState(''); // State for author filter
-  const [selectedCategory, setSelectedCategory] = useState(''); // New state for category filter
+  const [selectedAuthor, setSelectedAuthor] = useState(''); 
+  const [selectedCategory, setSelectedCategory] = useState(''); 
   const [currentPage, setCurrentPage] = useState(1);
   const booksPerPage = 6;
 
@@ -20,23 +20,19 @@ export default function BookList() {
       dispatch(fetchBooks());
     }
   }, [status, dispatch]);
-
-  // Reset pagination when filters or search terms change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, sortBy, priceRange, selectedAuthor, selectedCategory]); // Add selectedCategory to dependencies
+  }, [searchTerm, sortBy, priceRange, selectedAuthor, selectedCategory]); 
 
 
   const resetFilters = () => {
     setSortBy('');
     setPriceRange({ from: '', to: '' });
     setSearchTerm('');
-    setSelectedAuthor(''); // Reset author filter
-    setSelectedCategory(''); // Reset category filter
-    // setCurrentPage(1); // No need to set here, useEffect handles it
+    setSelectedAuthor(''); 
+    setSelectedCategory(''); 
+    
   };
-
-  // Derive unique authors from the fetched books
   const uniqueAuthors = useMemo(() => {
     const authorsSet = new Set();
     books.forEach(book => {
@@ -45,19 +41,19 @@ export default function BookList() {
       }
     });
     return [...authorsSet].sort();
-  }, [books]); // Re-calculate when 'books' changes
+  }, [books]); 
 
-  // Derive unique categories from the fetched books
+  
   const uniqueCategories = useMemo(() => {
     const categoriesSet = new Set();
     books.forEach(book => {
-      // Assuming 'categoryName' is the property for category name in each book object
+    
       if (book.categoryName) {
         categoriesSet.add(book.categoryName);
       }
     });
     return [...categoriesSet].sort();
-  }, [books]); // Re-calculate when 'books' changes
+  }, [books]); 
 
   const filteredBooks = useMemo(() => {
     let result = [...books];
@@ -77,12 +73,12 @@ export default function BookList() {
       result = result.filter((book) => book.price <= parseFloat(priceRange.to));
     }
 
-    // Filter by selected author
+    
     if (selectedAuthor) {
       result = result.filter((book) => book.authorName && book.authorName === selectedAuthor);
     }
 
-    // New: Filter by selected category
+    
     if (selectedCategory) {
       result = result.filter((book) => book.categoryName && book.categoryName === selectedCategory);
     }
@@ -106,7 +102,7 @@ export default function BookList() {
     }
 
     return result;
-  }, [books, searchTerm, priceRange, selectedAuthor, selectedCategory, sortBy]); // Add selectedCategory to dependencies
+  }, [books, searchTerm, priceRange, selectedAuthor, selectedCategory, sortBy]); 
 
   const paginatedBooks = useMemo(() => {
     const start = (currentPage - 1) * booksPerPage;
