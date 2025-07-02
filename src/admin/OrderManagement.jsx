@@ -2,17 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllOrders, updateOrderStatus } from './../store/orderSlice';
 
-// Define items per page
-const ITEMS_PER_PAGE = 10; // You can adjust this value as needed
+const ITEMS_PER_PAGE = 10; 
 
 export default function OrderManagement() {
     const dispatch = useDispatch();
-    const { items: orders, status, error } = useSelector(state => state.orders); // Destructure error from state
+    const { items: orders, status, error } = useSelector(state => state.orders); 
 
-    // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
 
-    const getStatusClass = (orderStatus) => { // Renamed parameter to avoid conflict
+    const getStatusClass = (orderStatus) => { 
         switch (orderStatus.toLowerCase()) {
             case 'delivered':
                 return 'bg-green-100 text-green-600';
@@ -31,15 +29,13 @@ export default function OrderManagement() {
         if (status === 'idle') {
             dispatch(fetchAllOrders());
         }
-        // Reset to page 1 if orders data changes (e.g., after an update or re-fetch)
         setCurrentPage(1); 
-    }, [status, dispatch, orders.length]); // Add orders.length to dependency array
+    }, [status, dispatch, orders.length]); 
 
     const handleStatusChange = (orderId, newStatus) => {
         dispatch(updateOrderStatus({ orderId, newStatus }));
     };
 
-    // Calculate pagination values
     const totalPages = Math.ceil(orders.length / ITEMS_PER_PAGE);
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
@@ -61,7 +57,6 @@ export default function OrderManagement() {
         setCurrentPage(pageNumber);
     };
 
-    // --- Loading and Error States ---
     if (status === 'loading') {
         return (
             <div className="bg-white p-6 rounded-xl shadow-lg text-center">
@@ -96,13 +91,13 @@ export default function OrderManagement() {
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {currentOrders.map(order => ( // Map over 'currentOrders'
+                            {currentOrders.map(order => ( 
                                 <tr key={order.id}>
                                     <td className="px-6 py-4 font-mono text-sm">{order.id}</td>
-                                    <td className="px-6 py-4">{order.userName || 'N/A'}</td> {/* Added fallback */}
-                                    <td className="px-6 py-4">₹{order.totalAmount ? order.totalAmount.toFixed(2) : '0.00'}</td> {/* Added fallback */}
+                                    <td className="px-6 py-4">{order.userName || 'N/A'}</td> 
+                                    <td className="px-6 py-4">₹{order.totalAmount ? order.totalAmount.toFixed(2) : '0.00'}</td>
                                     <td className="px-6 py-4">
-                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusClass(order.status || 'unknown')}`}> {/* Added fallback */}
+                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusClass(order.status || 'unknown')}`}> 
                                             {order.status || 'Unknown'}
                                         </span>
                                     </td>
@@ -111,8 +106,7 @@ export default function OrderManagement() {
                                             onChange={(e) => handleStatusChange(order.id, e.target.value)} 
                                             defaultValue={order.status} 
                                             className="p-1 border rounded-md text-sm"
-                                            // Optionally disable if order is already delivered or cancelled
-                                            // disabled={order.status === 'DELIVERED' || order.status === 'CANCELLED'} 
+                                            
                                         >
                                             <option value="PENDING">Pending</option>
                                             <option value="SHIPPED">Shipped</option>
@@ -127,8 +121,7 @@ export default function OrderManagement() {
                 )}
             </div>
 
-            {/* Pagination Controls */}
-            {orders.length > ITEMS_PER_PAGE && ( // Only show pagination if more than 10 orders
+            {orders.length > ITEMS_PER_PAGE && ( 
                 <div className="flex justify-center mt-8 space-x-2">
                     <button
                         onClick={goToPreviousPage}

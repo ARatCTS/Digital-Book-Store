@@ -1,9 +1,7 @@
-// /src/components/common/HomePage.js
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import HeroSection from './HeroSection';
-// 1. Import the new WelcomeBanner component
 import UserSection from './UserSection';
 
 const GuestHomePage = () => (
@@ -14,7 +12,6 @@ const UserHomePage = ({ user }) => (
     <>
         <UserSection user={user} />
         <HeroSection/>
-        {/* 2. Replace the old welcome div with the new WelcomeBanner component */}
     </>
 );
 

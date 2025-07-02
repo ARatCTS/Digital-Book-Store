@@ -2,26 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllReviews, moderateReview, deleteReview } from './../store/reviewSlice';
 
-// Define items per page for reviews
-const ITEMS_PER_PAGE = 10; // You can adjust this value
-
+const ITEMS_PER_PAGE = 10; 
 export default function ReviewManagement() {
     const dispatch = useDispatch();
-    // Select 'allReviews' and its 'allReviewsStatus' and 'allReviewsError' from the state
     const { allReviews: reviews, allReviewsStatus: status, allReviewsError: error } = useSelector(state => state.reviews);
 
-    // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
-        // Fetch all reviews only if the status is 'idle', to avoid multiple fetches on mount
         if (status === 'idle') {
             dispatch(fetchAllReviews());
         }
-        // Reset to page 1 if reviews data changes (e.g., after an action or re-fetch)
-        // This ensures consistent behavior when reviews are added/deleted/moderated
+
         setCurrentPage(1); 
-    }, [status, dispatch, reviews.length]); // Depend on 'status', 'dispatch', and 'reviews.length'
+    }, [status, dispatch, reviews.length]); 
 
     const handleApprove = (id) => {
         dispatch(moderateReview({ id, approved: true }));
@@ -34,11 +28,9 @@ export default function ReviewManagement() {
         }
     };
 
-    // --- Pagination Logic ---
     const totalPages = Math.ceil(reviews.length / ITEMS_PER_PAGE);
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
-    // Get only the reviews for the current page
     const currentReviews = reviews.slice(startIndex, endIndex);
 
     const goToNextPage = () => {
@@ -57,7 +49,6 @@ export default function ReviewManagement() {
         setCurrentPage(pageNumber);
     };
 
-    // --- Loading and Error States ---
     if (status === 'loading') {
         return (
             <div className="bg-white p-6 rounded-xl shadow-lg text-center">
@@ -78,10 +69,10 @@ export default function ReviewManagement() {
         <div className="bg-white p-6 rounded-xl shadow-lg">
             <h1 className="text-2xl font-bold mb-4">Moderate Reviews</h1>
             <div className="space-y-4">
-                {currentReviews.length === 0 && status === 'succeeded' ? ( // Check currentReviews for display
+                {currentReviews.length === 0 && status === 'succeeded' ? ( 
                     <p>No reviews available for moderation.</p>
                 ) : (
-                    currentReviews.map(review => ( // Map over 'currentReviews' for pagination
+                    currentReviews.map(review => ( 
                         <div key={review.id} className="border p-4 rounded-lg flex flex-col sm:flex-row justify-between items-start sm:items-center">
                             <div className="mb-2 sm:mb-0 sm:mr-4 flex-grow">
                                 <p>
@@ -102,7 +93,6 @@ export default function ReviewManagement() {
                                 </p>
                             </div>
                             <div className="flex space-x-2 flex-shrink-0">
-                                {/* Only show Approve button if the review is not yet approved */}
                                 {!review.approved && (
                                     <button
                                         onClick={() => handleApprove(review.id)}
@@ -123,8 +113,7 @@ export default function ReviewManagement() {
                 )}
             </div>
 
-            {/* Pagination Controls */}
-            {reviews.length > ITEMS_PER_PAGE && ( // Only show pagination if there are more reviews than ITEMS_PER_PAGE
+            {reviews.length > ITEMS_PER_PAGE && ( 
                 <div className="flex justify-center mt-8 space-x-2">
                     <button
                         onClick={goToPreviousPage}

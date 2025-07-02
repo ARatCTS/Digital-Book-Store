@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../store/authSlice';
 import Logo from '../assets/logo.png';
 
-// A custom hook to detect clicks outside of a component
 const useOutsideAlerter = (ref, callback) => {
   useEffect(() => {
     function handleClickOutside(event) {
@@ -36,7 +35,7 @@ const UserMenu = ({ user, onLogout }) => {
         <span className="sr-only">Toggle dashboard menu</span>
         {user?.profilePicture ? (
           <img
-            src={user.profilePicture} // Assuming user object has a profilePicture field
+            src={user.profilePicture} 
             alt="User profile"
             className="size-10 object-cover"
           />
@@ -69,22 +68,7 @@ const UserMenu = ({ user, onLogout }) => {
             >
               My Orders
             </Link>
-            {/* You can add "Billing summary" and "Team settings" if they map to existing routes or are desired features */}
-            {/* <a
-              href="#"
-              className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700"
-              role="menuitem"
-            >
-              Billing summary
-            </a>
-            <a
-              href="#"
-              className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700"
-              role="menuitem"
-            >
-              Team settings
-            </a> 
-            */}
+
           </div>
 
           <div className="p-2">
@@ -130,7 +114,6 @@ export default function NavBar() {
 
   const cartItemCount = cartItems.reduce((count, item) => count + item.quantity, 0);
 
-  // State for mobile menu
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
@@ -140,7 +123,6 @@ export default function NavBar() {
           <div className="flex-1 md:flex md:items-center md:gap-12">
             <Link className=" text-teal-600 flex flex-row items-center justify-center text-2xl gap-2 font-bold " to="/">
               <span className="sr-only">Home</span>
-              {/* You can replace this SVG with your 'BookStore' text or another logo */}
               <img src={Logo} className='w-6 h-auto' alt="logo" />
               <h1 className='text'>BookNest</h1>
             </Link>
@@ -152,7 +134,6 @@ export default function NavBar() {
                 <li>
                   <Link className="text-gray-500 transition hover:text-gray-500/75" to="/books"> Books </Link>
                 </li>
-                {/* You can map these "About", "Careers", etc., to actual routes or remove them if not needed */}
                 <li>
                   <a className="text-gray-500 transition hover:text-gray-500/75" href="/about"> About </a>
                 </li>
@@ -218,7 +199,6 @@ export default function NavBar() {
           </div>
         </div>
 
-        {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <div className="md:hidden">
             <ul className="flex flex-col gap-4 py-4 text-sm">

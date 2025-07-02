@@ -1,4 +1,3 @@
-// src/components/PaymentCompletePage.jsx
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -6,12 +5,11 @@ export default function PaymentCompletePage() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Redirect to /books after a few seconds
         const timer = setTimeout(() => {
             navigate('/books');
-        }, 3000); // Redirect after 3 seconds
+        }, 3000); 
 
-        return () => clearTimeout(timer); // Cleanup the timer
+        return () => clearTimeout(timer);
     }, [navigate]);
 
     return (
