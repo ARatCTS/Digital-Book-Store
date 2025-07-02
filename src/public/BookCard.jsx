@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addItemToCart } from './../store/cartSlice';
 import { fetchReviewsByBookId } from './../store/reviewSlice'; // Ensure this path is correct
 import { Link } from 'react-router-dom';
+import StarRating from './StarRating';
 
 export default function BookCard({ book }) {
   const dispatch = useDispatch();
@@ -86,7 +87,7 @@ export default function BookCard({ book }) {
                 <p className="text-sm text-gray-700">
                   {averageRating !== null ? (
                     <>
-                      Rating: <span className="font-semibold text-blue-600">{averageRating}</span> / 5 ({reviews.length} reviews)
+                      <StarRating rating={averageRating}/>
                     </>
                   ) : (
                     'No reviews yet'
