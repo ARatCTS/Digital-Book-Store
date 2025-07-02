@@ -34,21 +34,18 @@ const About = () => {
 
           <div className="mt-16 mb-16 flex flex-col items-center justify-center divide-y divide-gray-300 sm:flex-row sm:divide-x sm:divide-y-0 md:mt-20">
             <div className="flex max-w-xs space-x-2 px-4 py-4">
-              {/* Replaced star icon with a book icon */}
               <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-black-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13.414m0-13.414a2.25 2.25 0 00-2.25 2.25v1.336L9.278 12h5.444l-.472 2.664v-1.336A2.25 2.25 0 0012 10.503M12 6.253a2.25 2.25 0 012.25-2.25h.336A2.25 2.25 0 0116.826 6.13a2.25 2.25 0 012.234 2.077c.324 2.181.503 4.385.584 6.589A6.537 6.537 0 0112 21.75c-2.457 0-4.766-.56-6.536-1.546a.75.75 0 01-.137-.091 2.25 2.25 0 01-1.423-2.15L3 12.336v-1.336A2.25 2.25 0 015.25 8.753m7.5-6.5zm-3.75 0V.253c0-1.24 1.01-2.25 2.25-2.25s2.25 1.01 2.25 2.25v2.75" />
               </svg>
               <p className="text-gray-600">Explore diverse genres, from thrilling mysteries to heartwarming romances.</p>
             </div>
             <div className="flex max-w-xs space-x-2 px-4 py-4">
-              {/* Replaced chart icon with a magnifying glass/search icon */}
               <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-black-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               <p className="text-gray-600">Find exactly what you're looking for with our powerful search.</p>
             </div>
             <div className="flex max-w-xs space-x-2 px-4 py-4">
-              {/* Replaced money icon with a shopping cart icon */}
               <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-black-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>

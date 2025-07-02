@@ -1,4 +1,3 @@
-// src/pages/LoginPage.js
 
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,11 +11,10 @@ export default function LoginPage() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation(); // To get state from navigation
+  const location = useLocation();
 
   const { status, error, isAuthenticated, isAdmin } = useSelector((state) => state.auth);
 
-  // Get the success message from the registration page, if it exists
   const registrationSuccessMessage = location.state?.message;
 
   const handleSubmit = (e) => {
@@ -25,7 +23,6 @@ export default function LoginPage() {
   };
 
   useEffect(() => {
-    // Redirect user after successful login
     if (isAuthenticated) {
       if (isAdmin) {
         navigate('/admin/dashboard');
@@ -104,7 +101,6 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              {/* Display specific error messages from the backend */}
               {status === 'failed' && error && (
                   <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md text-center">
                     <p className="text-sm">

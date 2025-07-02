@@ -1,4 +1,3 @@
-// src/pages/RegisterPage.js
 import React, { useState } from 'react';
 import apiClient from './../api/apiClient';
 import { useNavigate, Link } from 'react-router-dom';
@@ -13,28 +12,22 @@ export default function RegisterPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  /**
-   * Handles the form submission for user registration.
-   * Includes client-side validation before sending the request to the backend.
-   */
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    // --- Client-side validation ---
     if (formData.password.length < 6) {
       setError('Password must be at least 6 characters long.');
-      return; // Stop the submission if validation fails
+      return; 
     }
 
     setLoading(true);
     try {
       await apiClient.post('/api/auth/register', formData);
-      // On successful registration, navigate to the login page with a success message
       navigate('/login', { state: { message: 'Registration successful! Please sign in.' } });
     } catch (err) {
-      // --- Backend error handling ---
-      // This will display messages from the server, such as "User already exists."
+
       setError(err.response?.data?.message || 'Registration failed. Please try again.');
     } finally {
         setLoading(false);

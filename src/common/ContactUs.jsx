@@ -17,13 +17,11 @@ export default function ContactUs() {
             alt="Contacts Image"
           />
         </div>
-        {/* End Col */}
 
         <div className="space-y-8 lg:space-y-16">
           <div>
             <h3 className="mb-5 font-semibold text-black">Our address</h3>
 
-            {/* Grid */}
             <div className="grid sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8 lg:gap-12">
               <div className="flex gap-4">
                 <svg
@@ -58,7 +56,6 @@ export default function ContactUs() {
           <div>
             <h3 className="mb-5 font-semibold text-black">Our contacts</h3>
 
-            {/* Grid */}
             <div className="grid sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8 lg:gap-12">
               <div className="flex gap-4">
                 <svg

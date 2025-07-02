@@ -21,7 +21,6 @@ export default function HeroSection(){
                 </div>
 
                 <div className="aspect-[7/4]">
-                    {/* Replaced dashboard image with a book-related image */}
                     <img src='https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' class="shrink-0 w-full h-full rounded-md object-cover" alt="Bookshelf" />
                 </div>
             </div>
