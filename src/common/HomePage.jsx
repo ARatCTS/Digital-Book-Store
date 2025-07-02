@@ -20,7 +20,7 @@ const AdminHomePage = () => (
         <h1 className="text-3xl font-bold text-gray-800">Admin Control Center</h1>
         <p className="text-gray-600 mt-2">Manage your bookstore's inventory, orders, and more from one place.</p>
         <div className="mt-6">
-            <Link to="/admin/dashboard" className="px-6 py-2 text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">Go to Admin Dashboard</Link>
+            <Link to="/admin/dashboard" className="px-6 py-2 text-white bg-gray-600 rounded-lg hover:bg-gray-900">Go to Admin Dashboard</Link>
         </div>
     </div>
 );
