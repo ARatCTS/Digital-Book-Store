@@ -16,7 +16,7 @@ const getInitialState = () => {
                     status: 'succeeded', error: null,
                 };
             }
-        } catch (error) { /* Invalid token */ }
+        } catch (error) {  }
     }
     return { user: null, token: null, isAuthenticated: false, isAdmin: false, status: 'idle', error: null };
 };
@@ -27,15 +27,12 @@ export const loginUser = createAsyncThunk('auth/login', async (credentials, { re
         localStorage.setItem('jwtToken', data.token);
         return data.token;
     } catch (error) {
-        // Ensure you're returning the specific error message from the backend
-        // error.response?.data might be an object, if so, get the message property
         return rejectWithValue(error.response?.data?.message || error.response?.data || 'Login failed due to network error or invalid credentials.');
     }
 });
 
 export const updateUserProfile = createAsyncThunk('auth/updateProfile', async (userData, { dispatch, rejectWithValue }) => {
     try {
-        // The backend uses the token to identify the user, so we send the DTO.
         const response = await apiClient.put(`/api/users/profile`, userData);
         dispatch(updateUser(response.data));
         return response.data;
@@ -54,13 +51,13 @@ const authSlice = createSlice({
             state.token = null;
             state.isAuthenticated = false;
             state.isAdmin = false;
-            state.status = 'idle'; // Reset status on logout
-            state.error = null; // Clear any errors on logout
+            state.status = 'idle'; 
+            state.error = null; 
         },
         updateUser: (state, action) => {
             state.user = { ...state.user, ...action.payload };
         },
-        clearAuthError: (state) => { // Add a reducer to clear error manually if needed
+        clearAuthError: (state) => { 
             state.error = null;
         }
     },
@@ -68,7 +65,7 @@ const authSlice = createSlice({
         builder
             .addCase(loginUser.pending, (state) => {
                 state.status = 'loading';
-                state.error = null; // Clear any previous errors when a new login attempt starts
+                state.error = null; 
             })
             .addCase(loginUser.fulfilled, (state, action) => {
                 const token = action.payload;
@@ -78,12 +75,11 @@ const authSlice = createSlice({
                 state.isAuthenticated = true;
                 state.isAdmin = decodedToken.roles.includes('ADMIN');
                 state.status = 'succeeded';
-                state.error = null; // Clear error on success
+                state.error = null; 
                 console.log("State", state.user);
             })
             .addCase(loginUser.rejected, (state, action) => {
                 state.status = 'failed';
-                // action.payload will contain the value passed to rejectWithValue
                 state.error = action.payload;
                 state.isAuthenticated = false;
                 state.user = null;
@@ -92,7 +88,6 @@ const authSlice = createSlice({
             })
             .addCase(updateUserProfile.fulfilled, (state, action) => {
                 state.status = 'succeeded';
-                // User data is already updated by the `updateUser` reducer dispatched from the thunk
                 state.error = null;
             })
             .addCase(updateUserProfile.rejected, (state, action) => {

@@ -3,28 +3,23 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchBooks, deleteBook } from './../store/bookSlice';
 import BookForm from './BookForm';
 
-// Define items per page
-const ITEMS_PER_PAGE = 10; // You can adjust this value as needed
+const ITEMS_PER_PAGE = 10; 
 
 export default function BookManagement() {
     const dispatch = useDispatch();
-    const { items: books, status, error } = useSelector((state) => state.books); // Destructure error
+    const { items: books, status, error } = useSelector((state) => state.books); 
     
-    // UI state for modal and editing
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingBook, setEditingBook] = useState(null);
 
-    // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
-        // Fetch books only if the status is 'idle' to prevent multiple fetches
         if (status === 'idle') {
             dispatch(fetchBooks());
         }
-        // Reset to page 1 if the books data changes (e.g., after add/edit/delete)
         setCurrentPage(1);
-    }, [dispatch, status, books.length]); // Add books.length to dependencies
+    }, [dispatch, status, books.length]); 
 
     const handleEdit = (book) => {
         setEditingBook(book);
@@ -32,7 +27,7 @@ export default function BookManagement() {
     };
 
     const handleAddNew = () => {
-        setEditingBook(null); // Clear any previous editing state
+        setEditingBook(null); 
         setIsModalOpen(true);
     };
 
@@ -43,11 +38,10 @@ export default function BookManagement() {
         }
     };
 
-    // --- Pagination Logic ---
     const totalPages = Math.ceil(books.length / ITEMS_PER_PAGE);
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
-    const currentBooks = books.slice(startIndex, endIndex); // Books for the current page
+    const currentBooks = books.slice(startIndex, endIndex); 
 
     const goToNextPage = () => {
         if (currentPage < totalPages) {
@@ -65,7 +59,6 @@ export default function BookManagement() {
         setCurrentPage(pageNumber);
     };
 
-    // --- Loading and Error States ---
     if (status === 'loading') {
         return (
             <div className="bg-white p-6 rounded-xl shadow-lg text-center">
@@ -104,7 +97,7 @@ export default function BookManagement() {
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {currentBooks.map((book) => ( // Map over 'currentBooks'
+                            {currentBooks.map((book) => ( 
                                 <tr key={book.id}>
                                     <td className="px-6 py-4 whitespace-nowrap">{book.title || 'N/A'}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">{book.authorName || 'N/A'}</td>
@@ -129,8 +122,7 @@ export default function BookManagement() {
                 )}
             </div>
 
-            {/* Pagination Controls */}
-            {books.length > ITEMS_PER_PAGE && ( // Only show pagination if more than ITEMS_PER_PAGE books
+            {books.length > ITEMS_PER_PAGE && ( 
                 <div className="flex justify-center mt-8 space-x-2">
                     <button
                         onClick={goToPreviousPage}

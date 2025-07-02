@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 
 const AdminSidebarLink = ({ to, children }) => {
-    // Determine if the current route matches the link's 'to' prop
-    // This is a more robust way to handle active states for nested routes
+
     const location = useLocation();
     const isActive = location.pathname.startsWith(to) && (to === '/admin' || location.pathname.length > to.length);
 
@@ -18,19 +17,15 @@ const AdminSidebarLink = ({ to, children }) => {
 
 export default function AdminLayout() {
     const [openSidebar, setOpenSidebar] = useState(false);
-    const location = useLocation(); // To get current path for active section logic
-
-    // Effect to close sidebar on route change for mobile
+    const location = useLocation(); 
     useEffect(() => {
         setOpenSidebar(false);
     }, [location.pathname]);
 
-    // Helper to get window width for responsive sidebar behavior
     const isLargeScreen = window.innerWidth >= 768;
 
     return (
         <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
-            {/* Sidebar */}
             <aside className={`bg-white shadow-lg transition-all duration-300 ease-in-out fixed md:static inset-y-0 left-0 z-50
                                ${openSidebar ? 'w-64' : 'w-20'} ${!openSidebar && !isLargeScreen ? 'hidden' : ''} md:w-64`}>
                 <div className="p-4 flex items-center justify-between border-b">
@@ -82,9 +77,7 @@ export default function AdminLayout() {
                 </nav>
             </aside>
 
-            {/* Main Content */}
             <main className="flex-1  md:p-6 overflow-y-auto">
-                {/* Mobile Menu Toggle (only visible on small screens when sidebar is closed) */}
                 <div className={`md:hidden flex justify-between items-center mb-4 ${openSidebar ? 'hidden' : 'block'}`}>
                     <h1 className="text-xl font-bold text-gray-800">Admin Panel</h1>
                     <button onClick={() => setOpenSidebar(!openSidebar)} class="p-2 rounded-full hover:bg-gray-200">
@@ -93,7 +86,7 @@ export default function AdminLayout() {
                         </svg>
                     </button>
                 </div>
-                <Outlet /> {/* This is where your AdminDashboard, BookManagement etc. will render */}
+                <Outlet />
             </main>
         </div>
     );

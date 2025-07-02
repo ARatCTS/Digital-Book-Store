@@ -3,9 +3,8 @@ import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchBooks } from '../store/bookSlice';
 import { fetchAllOrders } from '../store/orderSlice';
-import { fetchAllReviews } from '../store/reviewSlice'; // Assuming this action fetches all reviews
+import { fetchAllReviews } from '../store/reviewSlice'; 
 
-// Renamed for clarity, since it's used inside AdminDashboard and links directly
 const DashboardStatCard = ({ title, value, linkTo }) => (
     <Link to={linkTo} className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow block">
         <h2 className="text-lg font-semibold text-gray-700">{title}</h2>
@@ -16,23 +15,17 @@ const DashboardStatCard = ({ title, value, linkTo }) => (
 export default function AdminDashboard() {
     const dispatch = useDispatch();
 
-    // Select books, orders, and all reviews
     const books = useSelector(state => state.books.items);
     const orders = useSelector(state => state.orders.items);
-    // Assuming reviewSlice stores all reviews under `allReviews` as seen in ReviewManagement
     const allReviews = useSelector(state => state.reviews.allReviews); 
-    const reviewStatus = useSelector(state => state.reviews.allReviewsStatus); // Get review fetch status
+    const reviewStatus = useSelector(state => state.reviews.allReviewsStatus); 
 
-    // Filter pending orders and reviews for specific stats
     const pendingOrders = orders.filter(order => order.status && order.status.toLowerCase() === 'pending');
-    // Filter for pending reviews (assuming 'approved' property indicates status)
     const pendingReviews = allReviews.filter(review => !review.approved);
 
     useEffect(() => {
-        // Fetch all necessary data when the dashboard mounts
         dispatch(fetchBooks());
         dispatch(fetchAllOrders());
-        // Only dispatch fetchAllReviews if it hasn't been fetched or is in an idle state
         if (reviewStatus === 'idle') {
             dispatch(fetchAllReviews());
         }
@@ -48,9 +41,7 @@ export default function AdminDashboard() {
                 <DashboardStatCard title="Total Books" value={books.length} linkTo="/admin/books" />
                 <DashboardStatCard title="Total Orders" value={orders.length} linkTo="/admin/orders" />
                 <DashboardStatCard title="Total Reviews" value={allReviews.length} linkTo="/admin/reviews" />
-                {/* New card for Pending Orders */}
                 <DashboardStatCard title="Pending Orders" value={pendingOrders.length} linkTo="/admin/orders" />
-                {/* New card for Pending Reviews */}
                 <DashboardStatCard title="Pending Reviews" value={pendingReviews.length} linkTo="/admin/reviews" />
             </div>
         </div>
